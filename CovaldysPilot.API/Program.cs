@@ -30,10 +30,11 @@ builder.Services.AddRateLimiter(options =>
       }));
 
   // Politique stricte pour l'authentification : 5 tentatives par 5 minutes
-  options.AddFixedWindowLimiter("auth", authOptions =>
+  options.AddTokenBucketLimiter("auth", authOptions =>
   {
-    authOptions.PermitLimit = 5;
-    authOptions.Window = TimeSpan.FromMinutes(5);
+    authOptions.TokenLimit = 9;
+    authOptions.TokensPerPeriod = 3;
+    authOptions.ReplenishmentPeriod = TimeSpan.FromSeconds(20);
   });
 
   options.RejectionStatusCode = 429;
