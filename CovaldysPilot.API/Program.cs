@@ -1,10 +1,16 @@
 using CovaldysPilot.Infrastructure.DataBase.Context;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
+
+Log.Logger = new LoggerConfiguration()
+  .WriteTo.Console()
+  .WriteTo.File("Logs/covaldys-.log", rollingInterval: RollingInterval.Day)
+  .MinimumLevel.Information()
+  .CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+builder.Host.UseSerilog();
 builder.Services.AddOpenApi();
 builder.Services.AddDbContext<CovaldysPilotDbContext>(options =>
   options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -20,3 +26,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseSerilogRequestLogging();
+
+app.Run();

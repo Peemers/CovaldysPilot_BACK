@@ -484,3 +484,4 @@ $RECYCLE.BIN/
 docker-compose.override.yml
 appsettings.Development.json
 appsettings.Local.json
+Logs/
