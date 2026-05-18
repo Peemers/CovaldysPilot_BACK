@@ -1,4 +1,6 @@
+using System.Threading.RateLimiting;
 using CovaldysPilot.Infrastructure.DataBase.Context;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -15,6 +17,28 @@ builder.Services.AddOpenApi();
 builder.Services.AddDbContext<CovaldysPilotDbContext>(options =>
   options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddRateLimiter(options =>
+{
+  // Politique globale : 30 requêtes par minute
+  options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+    RateLimitPartition.GetFixedWindowLimiter(
+      partitionKey: context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+      factory: _ => new FixedWindowRateLimiterOptions
+      {
+        PermitLimit = 30,
+        Window = TimeSpan.FromMinutes(1)
+      }));
+
+  // Politique stricte pour l'authentification : 5 tentatives par 5 minutes
+  options.AddFixedWindowLimiter("auth", authOptions =>
+  {
+    authOptions.PermitLimit = 5;
+    authOptions.Window = TimeSpan.FromMinutes(5);
+  });
+
+  options.RejectionStatusCode = 429;
+});
+
 
 var app = builder.Build();
 
@@ -25,7 +49,12 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseSerilogRequestLogging();
+
+//rate-limiter désactivé en dev
+if (!app.Environment.IsDevelopment())
+{
+  app.UseRateLimiter();
+}
 
 app.Run();
