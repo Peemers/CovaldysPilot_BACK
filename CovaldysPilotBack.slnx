@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="CovaldysPilot.API/CovaldysPilot.API.csproj" />
+  <Project Path="CovaldysPilot.Application/CovaldysPilot.Application.csproj" />
+  <Project Path="CovaldysPilot.Domain/CovaldysPilot.Domain.csproj" />
+  <Project Path="CovaldysPilot.Infrastructure/CovaldysPilot.Infrastructure.csproj" />
+</Solution>
