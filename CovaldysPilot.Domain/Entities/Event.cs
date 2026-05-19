@@ -18,5 +18,5 @@ public class Event : BaseEntity
 
   public ICollection<SignIn> SignIns { get; set; } = new List<SignIn>();
   public ICollection<Review> Reviews { get; set; } = new List<Review>();
-  public ICollection<Category> Categories { get; set; } = new List<Category>();
+  public ICollection<EventCategory> EventCategories { get; set; } = new List<EventCategory>();
 }
