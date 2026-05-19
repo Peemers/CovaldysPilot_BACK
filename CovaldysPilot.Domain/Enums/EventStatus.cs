@@ -1,6 +1,6 @@
 ﻿namespace CovaldysPilot.Domain.Enums;
 
-public enum EventSatus
+public enum EventStatus
 {
   EnAttente,
   EnCours,
