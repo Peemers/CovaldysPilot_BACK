@@ -10,7 +10,7 @@ public class User : BaseEntity
   public required Role Role { get; set; } = Role.Membre;
   public Genre Gender { get; set; }
   public required DateTime Birthday { get; set; }
-  public bool IsMemberShipUpToDate { get; set; }
+  public bool IsMembershipUpToDate { get; set; }
   public DateTime? LastPayementDate { get; set; }
 
   public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
