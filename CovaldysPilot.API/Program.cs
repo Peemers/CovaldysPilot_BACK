@@ -18,6 +18,7 @@ builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddRateLimiterPolicies();
 builder.Services.AddJwtAuthentication(builder.Configuration);
+builder.Services.AddCorsPolicy(builder.Configuration);
 
 
 var app = builder.Build();
@@ -30,6 +31,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("CovaldysPolicy");
 app.UseSerilogRequestLogging();
 app.UseAuthentication();
 app.UseAuthorization();
