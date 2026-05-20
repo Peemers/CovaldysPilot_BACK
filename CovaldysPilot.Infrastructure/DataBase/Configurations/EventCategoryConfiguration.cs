@@ -21,6 +21,6 @@ public class EventCategoryConfiguration : IEntityTypeConfiguration<EventCategory
     builder.HasOne(ec => ec.Category)
       .WithMany(c => c.EventCategories)
       .HasForeignKey(ec => ec.CategoryId)
-      .OnDelete(DeleteBehavior.Cascade);
+      .OnDelete(DeleteBehavior.Restrict);
   }
 }
