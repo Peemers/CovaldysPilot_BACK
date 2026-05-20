@@ -2,6 +2,7 @@ using CovaldysPilot.API.Extensions;
 using CovaldysPilot.API.Middlewares;
 using CovaldysPilot.Application.Extensions;
 using CovaldysPilot.Infrastructure.Extensions;
+using Scalar.AspNetCore;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -28,6 +29,15 @@ app.UseMiddleware<ExceptionMiddleware>(); // tout premier middleware
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference(option =>
+    {
+      option.Title = "Covaldys Pilot API";
+      option.Theme = ScalarTheme.Moon;
+      option.AddHttpAuthentication("Bearer", bearer =>
+      {
+        bearer.Token = "votre-token-jwt";
+      });
+    });
 }
 
 app.UseHttpsRedirection();
