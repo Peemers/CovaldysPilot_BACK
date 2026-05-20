@@ -375,6 +375,20 @@ namespace CovaldysPilot.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("00000000-0000-0000-0000-000000000001"),
+                            Birthday = new DateTime(1980, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "admin@covaldys.be",
+                            Gender = 0,
+                            IsMembershipUpToDate = true,
+                            PasswordHash = "$2a$12$tQq2hT.BkM7p6.kvoEh52erLK6mSLS4JJlvizh251NcG37qwUrY5u",
+                            Pseudo = "Admin",
+                            Role = 1
+                        });
                 });
 
             modelBuilder.Entity("CovaldysPilot.Domain.Entities.Article", b =>
