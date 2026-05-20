@@ -20,6 +20,7 @@ builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddRateLimiterPolicies();
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddCorsPolicy(builder.Configuration);
+builder.Services.AddControllers();
 
 
 var app = builder.Build();
@@ -45,6 +46,7 @@ app.UseCors("CovaldysPolicy");
 app.UseSerilogRequestLogging();
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapControllers();
 
 //rate-limiter désactivé en dev
 if (!app.Environment.IsDevelopment())

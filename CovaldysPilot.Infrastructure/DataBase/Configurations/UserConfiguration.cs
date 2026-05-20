@@ -1,4 +1,5 @@
 ﻿using CovaldysPilot.Domain.Entities;
+using CovaldysPilot.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -33,5 +34,17 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
     builder.Property(u => u.CreatedAt)
       .IsRequired()
       .ValueGeneratedOnAdd();
+    
+    builder.HasData(new User
+    {
+      Id = Guid.Parse("00000000-0000-0000-0000-000000000001"),
+      Pseudo = "Admin",
+      Email = "admin@covaldys.be",
+      PasswordHash = "$2a$12$tQq2hT.BkM7p6.kvoEh52erLK6mSLS4JJlvizh251NcG37qwUrY5u",
+      Role = Role.Admin,
+      Birthday = new DateTime(1980, 1, 1),
+      IsMembershipUpToDate = true,
+      CreatedAt = new DateTime(2026, 1, 1)
+    });
   }
 }
