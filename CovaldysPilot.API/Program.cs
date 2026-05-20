@@ -1,4 +1,5 @@
 using CovaldysPilot.API.Extensions;
+using CovaldysPilot.API.Middlewares;
 using CovaldysPilot.Application.Extensions;
 using CovaldysPilot.Infrastructure.Extensions;
 using Serilog;
@@ -22,6 +23,7 @@ builder.Services.AddJwtAuthentication(builder.Configuration);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+app.UseMiddleware<ExceptionMiddleware>(); // tout premier middleware
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
