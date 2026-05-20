@@ -12,10 +12,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.8" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Security\" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.8" />
   </ItemGroup>
 
   <PropertyGroup>
