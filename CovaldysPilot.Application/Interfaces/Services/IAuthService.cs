@@ -1,9 +1,12 @@
-﻿namespace CovaldysPilot.Application.Interfaces.Services;
+﻿using CovaldysPilot.Application.DTOs.Auth.Request;
+using CovaldysPilot.Application.DTOs.Auth.Response;
+
+namespace CovaldysPilot.Application.Interfaces.Services;
 
 public interface IAuthService
 {
-  Task<AuthResultDto> RegisterAsync(RegisterDto dto);
-  Task<AuthResultDto> LoginAsync(LoginDto dto);
-  Task<AuthResultDto> RefreshTokenAsync(string refreshToken);
+  Task<AuthResponseDto> RegisterAsync(RegisterRequestDto dto);
+  Task<AuthResponseDto> LoginAsync(LoginRequestDto dto);
+  Task<AuthResponseDto> RefreshTokenAsync(RefreshTokenRequestDto dto);
   Task RevokeTokenAsync(string refreshToken);
 }
