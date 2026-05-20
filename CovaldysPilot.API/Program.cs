@@ -1,5 +1,6 @@
 using CovaldysPilot.API.Extensions;
 using CovaldysPilot.API.Middlewares;
+using CovaldysPilot.API.Scalar;
 using CovaldysPilot.Application.Extensions;
 using CovaldysPilot.Infrastructure.Extensions;
 using Scalar.AspNetCore;
@@ -14,7 +15,10 @@ Log.Logger = new LoggerConfiguration()
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseSerilog();
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options =>
+{
+  options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
+});
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddRateLimiterPolicies();
