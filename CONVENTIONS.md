@@ -2,7 +2,8 @@
 
 ## Architecture
 - Clean Architecture : Domain → Application → Infrastructure → API
-- DTOs et Mappers dans la couche API
+- DTOs dans la couche Application (partagés entre Application et API)
+- Mappers dans la couche Application
 - Interfaces dans la couche Application
 - Implémentations dans la couche Infrastructure
 - Méthodes d'extension pour les injections de dépendances (pas dans Program.cs)
