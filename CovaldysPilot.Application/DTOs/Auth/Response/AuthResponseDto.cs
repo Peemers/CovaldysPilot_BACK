@@ -8,4 +8,6 @@ public class AuthResponseDto
   public required string Pseudo { get; set; }
   public required string Role { get; set; }
   public required DateTime ExpiresAt { get; set; }
+  public required string FirstName { get; set; }
+  public string? LastName { get; set; }
 }

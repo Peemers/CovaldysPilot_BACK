@@ -6,6 +6,9 @@ public class User : BaseEntity
 {
   public required string Pseudo { get; set; } = string.Empty;
   public required string Email { get; set; } = string.Empty;
+  public required string FirstName { get; set; } = string.Empty;
+  public string? LastName { get; set; }
+  public string? PhoneNumber { get; set; }
   public required string PasswordHash { get; set; } = string.Empty;
   public required Role Role { get; set; } = Role.Membre;
   public Genre Gender { get; set; }

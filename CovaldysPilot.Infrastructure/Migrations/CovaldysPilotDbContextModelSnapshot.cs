@@ -342,11 +342,20 @@ namespace CovaldysPilot.Infrastructure.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<int>("Gender")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsMembershipUpToDate")
                         .HasColumnType("bit");
+
+                    b.Property<string>("LastName")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastPayementDate")
                         .HasColumnType("datetime2");
@@ -354,6 +363,10 @@ namespace CovaldysPilot.Infrastructure.Migrations
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("Pseudo")
                         .IsRequired()
@@ -383,9 +396,12 @@ namespace CovaldysPilot.Infrastructure.Migrations
                             Birthday = new DateTime(1980, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "admin@covaldys.be",
+                            FirstName = "Anabelle",
                             Gender = 0,
                             IsMembershipUpToDate = true,
+                            LastName = "AdminTest",
                             PasswordHash = "$2a$12$tQq2hT.BkM7p6.kvoEh52erLK6mSLS4JJlvizh251NcG37qwUrY5u",
+                            PhoneNumber = "+32470.32.32.32",
                             Pseudo = "Admin",
                             Role = 1
                         });
