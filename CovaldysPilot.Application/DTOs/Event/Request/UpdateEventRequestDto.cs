@@ -10,7 +10,10 @@ public class UpdateEventRequestDto
 
   [Required(ErrorMessage = "La description est obligatoire.")]
   public required string Description { get; set; }
-
+  
+  [Range(0, 10000)]
+  public decimal? Price { get; set; }
+  
   public string? Location { get; set; }
   public string? CoverImage { get; set; }
 

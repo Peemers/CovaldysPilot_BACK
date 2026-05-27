@@ -42,5 +42,8 @@ public class EventConfiguration : IEntityTypeConfiguration<Event>
     builder.Property(e => e.CreatedAt)
       .IsRequired()
       .ValueGeneratedOnAdd();
+
+    builder.Property(e => e.Price)
+      .HasPrecision(10, 2);
   }
 }

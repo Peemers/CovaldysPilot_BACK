@@ -15,6 +15,7 @@ public class Event : BaseEntity
   public int MaxParticipants { get; set; }
   public EventStatus Status { get; set; } = EventStatus.EnAttente;
   public bool IsWaitingListActive { get; set; }
+  public decimal? Price { get; set; }
 
   public ICollection<SignIn> SignIns { get; set; } = new List<SignIn>();
   public ICollection<Review> Reviews { get; set; } = new List<Review>();

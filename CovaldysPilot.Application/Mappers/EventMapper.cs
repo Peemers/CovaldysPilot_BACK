@@ -36,7 +36,8 @@ public static class EventMapper
         .ToList(),
       CanRegister = canRegister,
       IsRegistered = isRegistered,
-      WaitingListPosition = waitingListPosition
+      WaitingListPosition = waitingListPosition,
+      Price = evt.Price
     };
   }
 
@@ -55,7 +56,23 @@ public static class EventMapper
       MaxParticipants = dto.MaxParticipants,
       IsWaitingListActive = dto.IsWaitingListActive,
       Status = EventStatus.EnAttente,
-      CreatedAt = DateTime.UtcNow
+      CreatedAt = DateTime.UtcNow,
+      Price =  dto.Price
     };
+  }
+  public static void UpdateFromDto(this Event evt, UpdateEventRequestDto dto)
+  {
+    evt.Name = dto.Name;
+    evt.Description = dto.Description;
+    evt.Location = dto.Location;
+    evt.CoverImage = dto.CoverImage;
+    evt.StartDate = dto.StartDate;
+    evt.EndDate = dto.EndDate;
+    evt.RegistrationDeadline = dto.RegistrationDeadline;
+    evt.MinParticipants = dto.MinParticipants;
+    evt.MaxParticipants = dto.MaxParticipants;
+    evt.IsWaitingListActive = dto.IsWaitingListActive;
+    evt.UpdatedAt = DateTime.UtcNow;
+    evt.Price = dto.Price;
   }
 }
