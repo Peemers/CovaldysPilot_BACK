@@ -10,6 +10,7 @@ public static class ApplicationExtensions
   {
     services.AddScoped<IAuthService, AuthService>();
     services.AddScoped<ICategoryService, CategoryService>();
+    services.AddScoped<IEventService, EventService>();
         
     return services;
   }

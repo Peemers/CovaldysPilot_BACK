@@ -72,20 +72,22 @@ public class EventService(
     EnsureEventExists(evt, id);
     EnsureEventStatus(evt!, EventStatus.EnAttente, "modifiés");
 
+    Event validEvt = evt!;
+
     int currentParticipants = await eventRepository.GetCurrentParticipantsCountAsync(id);
     if (dto.MaxParticipants < currentParticipants)
       throw new InvalidOperationException($"Le nombre maximum ne peut pas être inférieur au nombre d'inscrits ({currentParticipants}).");
 
-    evt!.UpdateFromDto(dto);
+    validEvt.UpdateFromDto(dto);
 
-    evt.EventCategories.Clear();
-    await LinkCategoriesToEventAsync(evt, dto.CategoryIds);
+    validEvt.EventCategories.Clear();
+    await LinkCategoriesToEventAsync(validEvt, dto.CategoryIds);
 
-    await eventRepository.UpdateAsync(evt);
+    await eventRepository.UpdateAsync(validEvt);
     await eventRepository.SaveChangesAsync();
 
     logger.LogInformation("Événement modifié : {Id}", id);
-    return evt.ToEventResponseDto(currentParticipants);
+    return validEvt.ToEventResponseDto(currentParticipants);
   }
 
   public async Task DeleteAsync(Guid id)
