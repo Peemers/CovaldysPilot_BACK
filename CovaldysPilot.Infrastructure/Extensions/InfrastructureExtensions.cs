@@ -20,6 +20,7 @@ public static class InfrastructureExtensions
     // Repositories
     services.AddScoped<IUserRepository, UserRepository>();
     services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+    services.AddScoped<ICategoryRepository, CategoryRepository>();
 
     // Services
     services.AddScoped<IJwtService, JwtService>();
