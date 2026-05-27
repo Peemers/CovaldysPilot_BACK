@@ -35,11 +35,24 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
       .IsRequired()
       .ValueGeneratedOnAdd();
     
+    builder.Property(u => u.FirstName)
+      .IsRequired()
+      .HasMaxLength(100);
+
+    builder.Property(u => u.LastName)
+      .HasMaxLength(100);
+
+    builder.Property(u => u.PhoneNumber)
+      .HasMaxLength(20);
+    
     builder.HasData(new User
     {
       Id = Guid.Parse("00000000-0000-0000-0000-000000000001"),
       Pseudo = "Admin",
       Email = "admin@covaldys.be",
+      FirstName = "Anabelle",
+      LastName = "AdminTest",
+      PhoneNumber = "+32470.32.32.32",
       PasswordHash = "$2a$12$tQq2hT.BkM7p6.kvoEh52erLK6mSLS4JJlvizh251NcG37qwUrY5u",
       Role = Role.Admin,
       Birthday = new DateTime(1980, 1, 1),
