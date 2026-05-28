@@ -28,7 +28,8 @@ public static class SignInMapper
       EventId = dto.EventId,
       RegistrationDate = DateTime.Now,
       IsOnWaitingList = isOnWaitingList,
-      IsPaymentValid = false
+      IsPaymentValid = false,
+      CreatedAt = DateTime.Now,
     };
   }
 }
