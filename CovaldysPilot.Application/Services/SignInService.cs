@@ -1,4 +1,5 @@
-﻿using CovaldysPilot.Application.DTOs.SignIn.Request;
+﻿using System.Collections;
+using CovaldysPilot.Application.DTOs.SignIn.Request;
 using CovaldysPilot.Application.DTOs.SignIn.Response;
 using CovaldysPilot.Application.Interfaces.Repositories;
 using CovaldysPilot.Application.Interfaces.Services;
@@ -69,17 +70,71 @@ public class SignInService(
 
   #endregion
 
+  #region UnregisterSignIn
+
   public async Task UnregisterAsync(Guid userId, Guid signInId)
   {
     //verif inscription
-    
+    SignIn? signIn = await signInRepository.GetByIdAsync(signInId);
+    if (signIn == null)
+    {
+      throw new KeyNotFoundException($"l'inscription {signInId} n'existe pas.");
+    }
     //verif si bien celle de userid
-    
+    if (signIn.UserId != userId)
+    {
+      throw new InvalidOperationException("Vous ne pouvez pas vous désinscrire d'un événement appartenant à un autre utilisateur.");
+    }
     //verif si event est avec status .enAttente
-    
+    Event? evt = await eventRepository.GetByIdAsync(signIn.EventId);
+    if (evt == null)
+    {
+      throw new KeyNotFoundException($"L'événement {signIn.EventId} est introuvable");
+    }
+    if (evt.Status != EventStatus.EnAttente)
+    {
+      throw new InvalidOperationException("Vous ne pouvez vous désinscrire d'un événement qui n'est pas en attente");
+    }
+    bool wasOnWaitingList = signIn.IsOnWaitingList;
+
+    await signInRepository.DeleteAsync(signInId);
+    await signInRepository.SaveChangesAsync();
+
     // si pas en liste d'attente -> proouvoir le premier en attente via la methode plus bas
+
+    if (!wasOnWaitingList)
+    {
+      await PromoteFirstOnWaitingListAsync(signIn.EventId);
+    }
+
+    logger.LogInformation("Désinscription effectuée : {signInId}", signInId);
   }
 
+  #endregion
+
+  #region GetByEvent
+
+  public async Task<IEnumerable<SignInResponseDto>> GetByEventAsync(Guid eventId)
+  {
+    IEnumerable<SignIn> signIns = await signInRepository.GetByEventAsync(eventId);
+    return signIns.Select(signIn => signIn.ToSignInResponseDto());
+  }
+
+  #endregion
+
+  #region GetByUser
+
+  public async Task<IEnumerable<SignInResponseDto>> GetByUserAsync(Guid userId)
+  {
+    IEnumerable<SignIn> signIns = await signInRepository.GetByUserAsync(userId);
+    return signIns.Select(signIn => signIn.ToSignInResponseDto());
+  }
+
+  #endregion
+
+  #region PromoteFirstOnWaitingListAsync
+
+  //Methode prive de verif
   private async Task PromoteFirstOnWaitingListAsync(Guid eventId)
   {
     SignIn? firstOnWaiting = await signInRepository.GetFirstOnWaitingListAsync(eventId);
@@ -94,4 +149,6 @@ public class SignInService(
 
     logger.LogInformation("Membre {UserId} promu depuis la liste d'attente", firstOnWaiting.UserId);
   }
+
+  #endregion
 }
