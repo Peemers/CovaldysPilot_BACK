@@ -4,6 +4,7 @@ using CovaldysPilot.Infrastructure.DataBase.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CovaldysPilot.Infrastructure.Migrations
 {
     [DbContext(typeof(CovaldysPilotDbContext))]
-    partial class CovaldysPilotDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260527092634_AddFirstNameLastNamePhoneToUser")]
+    partial class AddFirstNameLastNamePhoneToUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -157,10 +160,6 @@ namespace CovaldysPilot.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
-
-                    b.Property<decimal?>("Price")
-                        .HasPrecision(10, 2)
-                        .HasColumnType("decimal(10,2)");
 
                     b.Property<DateTime>("RegistrationDeadline")
                         .HasColumnType("datetime2");

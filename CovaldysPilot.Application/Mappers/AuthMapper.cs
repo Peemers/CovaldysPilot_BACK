@@ -13,6 +13,9 @@ public static class AuthMapper
     {
       Pseudo = dto.Pseudo,
       Email = dto.Email,
+      FirstName = dto.FirstName,
+      LastName = dto.LastName,
+      PhoneNumber =  dto.PhoneNumber,
       PasswordHash = passwordHash,
       Role = Role.Membre,
       Birthday = dto.Birthday,
@@ -30,7 +33,9 @@ public static class AuthMapper
       RefreshToken = refreshToken,
       Pseudo = user.Pseudo,
       Role = user.Role.ToString(),
-      ExpiresAt = expiresAt
+      ExpiresAt = expiresAt,
+      FirstName =  user.FirstName,
+      LastName =  user.LastName,
     };
   }
 

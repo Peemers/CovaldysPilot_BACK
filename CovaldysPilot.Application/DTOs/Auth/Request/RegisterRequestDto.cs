@@ -8,6 +8,13 @@ public class RegisterRequestDto
   [StringLength(50, MinimumLength = 3, ErrorMessage = "Le pseudo doit contenir entre 3 et 50 caractères.")]
   public required string Pseudo { get; set; }
   
+  [Required(ErrorMessage = "Le prénom est obligatoire.")]
+  [StringLength(100, MinimumLength = 2)]
+  public required string FirstName { get; set; }
+
+  public string? LastName { get; set; }
+  public string? PhoneNumber { get; set; }
+  
   [Required(ErrorMessage = "L'email est obligatoire.")]
   [EmailAddress(ErrorMessage = "L'email n'est pas valide.")]
   public required string Email { get; set; }
