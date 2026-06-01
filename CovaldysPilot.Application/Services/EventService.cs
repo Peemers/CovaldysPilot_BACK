@@ -199,7 +199,7 @@ public class EventService(
     bool canRegister = !isRegistered &&
                        evt.Status == EventStatus.EnAttente &&
                        evt.RegistrationDeadline >= DateTime.UtcNow &&
-                       (currentParticipants < evt.MaxParticipants || evt.IsWaitingListActive);
+                       (currentParticipants < evt.MaxParticipants);
 
     return (canRegister, isRegistered);
   }
