@@ -51,9 +51,9 @@ public class SignInService(
     {
       throw new InvalidOperationException("L'événement est complet et ne dispose pas de file d'attente");
     }
-    
+
     SignIn signIn = dto.ToSignIn(userId, isFull);
-    
+
     if (isFull)
     {
       int waitingCount = await signInRepository.GetWaitingListCountAsync(dto.EventId);
@@ -62,7 +62,7 @@ public class SignInService(
 
     await signInRepository.AddAsync(signIn);
     await signInRepository.SaveChangesAsync();
-    
+
     logger.LogInformation("Inscription créée — EnAttente: {IsWaiting}", signIn.IsOnWaitingList);
     return signIn.ToSignInResponseDto();
   }
@@ -79,21 +79,25 @@ public class SignInService(
     {
       throw new KeyNotFoundException($"l'inscription {signInId} n'existe pas.");
     }
+
     //verif si bien celle de userid
     if (signIn.UserId != userId)
     {
       throw new InvalidOperationException("Vous ne pouvez pas vous désinscrire d'un événement appartenant à un autre utilisateur.");
     }
+
     //verif si event est avec status .enAttente
     Event? evt = await eventRepository.GetByIdAsync(signIn.EventId);
     if (evt == null)
     {
       throw new KeyNotFoundException($"L'événement {signIn.EventId} est introuvable");
     }
+
     if (evt.Status != EventStatus.EnAttente)
     {
       throw new InvalidOperationException("Vous ne pouvez vous désinscrire d'un événement qui n'est pas en attente");
     }
+
     bool wasOnWaitingList = signIn.IsOnWaitingList;
 
     await signInRepository.DeleteAsync(signInId);
@@ -156,17 +160,94 @@ public class SignInService(
   public async Task ValidatePayment(Guid signInId)
   {
     logger.LogInformation("Validation du paiement pour l'inscription {SignInId}", signInId);
-    
+
     SignIn? signIn = await signInRepository.GetByIdAsync(signInId);
     if (signIn == null)
       throw new KeyNotFoundException($"Inscription {signInId} introuvable.");
 
     signIn.IsPaymentValid = true;
-    
+
     await signInRepository.UpdateAsync(signIn);
     await signInRepository.SaveChangesAsync();
-    
+
     logger.LogInformation("Paiement validé pour l'inscription {SignInId}", signInId);
+  }
+
+  #endregion
+
+  #region AdminRegister
+
+  public async Task<SignInResponseDto> AdminRegisterAsync(Guid userId, Guid eventId)
+  {
+    logger.LogInformation("Inscription manuelle admin — UserId: {UserId}, EventId: {EventId}", userId, eventId);
+
+    Event? evt = await eventRepository.GetByIdWithDetailsAsync(eventId);
+    if (evt == null)
+      throw new KeyNotFoundException($"Événement {eventId} introuvable.");
+
+    if (evt.Status != EventStatus.EnAttente)
+      throw new InvalidOperationException("Cet événement n'accepte plus d'inscriptions.");
+
+    SignIn? existing = await signInRepository.GetByUserAndEventAsync(userId, eventId);
+    if (existing != null)
+      throw new InvalidOperationException("Ce membre est déjà inscrit à cet événement.");
+
+    int currentParticipants = await eventRepository.GetCurrentParticipantsCountAsync(eventId);
+    bool isFull = currentParticipants >= evt.MaxParticipants;
+
+    if (isFull && !evt.IsWaitingListActive)
+      throw new InvalidOperationException("L'événement est complet et ne dispose pas de file d'attente.");
+
+    SignIn signIn = new SignIn
+    {
+      UserId = userId,
+      EventId = eventId,
+      RegistrationDate = DateTime.UtcNow,
+      IsOnWaitingList = isFull,
+      IsPaymentValid = false
+    };
+
+    if (isFull)
+    {
+      int waitingCount = await signInRepository.GetWaitingListCountAsync(eventId);
+      signIn.WaitingListPosition = waitingCount + 1;
+    }
+
+    await signInRepository.AddAsync(signIn);
+    await signInRepository.SaveChangesAsync();
+
+    logger.LogInformation("Inscription manuelle créée — EnAttente: {IsWaiting}", signIn.IsOnWaitingList);
+    return signIn.ToSignInResponseDto();
+  }
+
+  #endregion
+
+  #region AdminUnregister
+
+  public async Task AdminUnregisterAsync(Guid signInId)
+  {
+    logger.LogInformation("Désinscription manuelle admin — SignInId: {SignInId}", signInId);
+
+    SignIn? signIn = await signInRepository.GetByIdAsync(signInId);
+    if (signIn == null)
+      throw new KeyNotFoundException($"Inscription {signInId} introuvable.");
+
+    Event? evt = await eventRepository.GetByIdAsync(signIn.EventId);
+    if (evt == null)
+      throw new KeyNotFoundException($"Événement {signIn.EventId} introuvable.");
+
+    if (evt.Status != EventStatus.EnAttente)
+      throw new InvalidOperationException("Impossible de désinscrire depuis un événement qui n'est pas en attente.");
+
+    bool wasOnWaitingList = signIn.IsOnWaitingList;
+
+    await signInRepository.DeleteAsync(signInId);
+    await signInRepository.SaveChangesAsync();
+
+    if (!wasOnWaitingList)
+      await PromoteFirstOnWaitingListAsync(signIn.EventId);
+
+    logger.LogInformation("Désinscription manuelle effectuée : {SignInId}", signInId);
   }
 
   #endregion
