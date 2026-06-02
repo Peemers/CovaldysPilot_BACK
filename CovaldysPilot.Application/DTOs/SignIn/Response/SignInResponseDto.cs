@@ -9,4 +9,7 @@ public class SignInResponseDto
   public bool IsOnWaitingList { get; set; }
   public int? WaitingListPosition { get; set; }
   public bool IsPaymentValid { get; set; }
+  public string? UserPseudo { get; set; }
+  public string? UserFirstName { get; set; }
+  public string? UserLastName { get; set; }
 }

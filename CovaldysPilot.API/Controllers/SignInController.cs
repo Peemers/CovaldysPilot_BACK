@@ -79,4 +79,18 @@ public class SignInController(
   }
 
   #endregion
+
+  #region ValidatePayment
+
+  [HttpPatch("{signInId:guid}/validate")]
+  [Authorize(Roles = "Admin")]
+  [EndpointSummary("Valider le paiement d'une inscription")]
+  public async Task<IActionResult> ValidatePayment(Guid signInId)
+  {
+    logger.LogInformation("PATCH /api/signin/{SignInId}/validate", signInId);
+    await signInService.ValidatePayment(signInId);
+    return NoContent();
+  }
+
+  #endregion
 }

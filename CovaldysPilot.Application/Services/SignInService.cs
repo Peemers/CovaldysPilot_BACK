@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using CovaldysPilot.Application.DTOs.SignIn.Request;
+﻿using CovaldysPilot.Application.DTOs.SignIn.Request;
 using CovaldysPilot.Application.DTOs.SignIn.Response;
 using CovaldysPilot.Application.Interfaces.Repositories;
 using CovaldysPilot.Application.Interfaces.Services;
@@ -148,6 +147,26 @@ public class SignInService(
     await signInRepository.SaveChangesAsync();
 
     logger.LogInformation("Membre {UserId} promu depuis la liste d'attente", firstOnWaiting.UserId);
+  }
+
+  #endregion
+
+  #region ValidatePayment
+
+  public async Task ValidatePayment(Guid signInId)
+  {
+    logger.LogInformation("Validation du paiement pour l'inscription {SignInId}", signInId);
+    
+    SignIn? signIn = await signInRepository.GetByIdAsync(signInId);
+    if (signIn == null)
+      throw new KeyNotFoundException($"Inscription {signInId} introuvable.");
+
+    signIn.IsPaymentValid = true;
+    
+    await signInRepository.UpdateAsync(signIn);
+    await signInRepository.SaveChangesAsync();
+    
+    logger.LogInformation("Paiement validé pour l'inscription {SignInId}", signInId);
   }
 
   #endregion

@@ -16,7 +16,10 @@ public static class SignInMapper
       RegistrationDate = signIn.RegistrationDate,
       IsOnWaitingList = signIn.IsOnWaitingList,
       WaitingListPosition = signIn.WaitingListPosition,
-      IsPaymentValid = signIn.IsPaymentValid
+      IsPaymentValid = signIn.IsPaymentValid,
+      UserPseudo = signIn.User?.Pseudo,
+      UserFirstName = signIn.User?.FirstName,
+      UserLastName = signIn.User?.LastName,
     };
   }
 
