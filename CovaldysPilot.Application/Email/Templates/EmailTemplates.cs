@@ -23,4 +23,15 @@ public static class EmailTemplates
                 <p>L'équipe Covaldys</p>
             """;
   }
+  
+  public static string EventReminder(string firstName, string eventName, DateTime startDate, string? location)
+  {
+    return $"""
+                <h2>Bonjour {firstName} !</h2>
+                <p>Nous vous rappelons que l'événement <strong>{eventName}</strong> aura lieu le <strong>{startDate:dd/MM/yyyy à HH:mm}</strong>.</p>
+                <p><strong>Lieu :</strong> {location ?? "À définir"}</p>
+                <p>Nous vous attendons nombreux !</p>
+                <p>L'équipe Covaldys</p>
+            """;
+  }
 }

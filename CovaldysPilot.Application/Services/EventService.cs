@@ -123,12 +123,12 @@ public class EventService(
 
     await eventRepository.UpdateAsync(evt);
     await eventRepository.SaveChangesAsync();
-    
+
     await SendEmailToAllSubscribersAsync(
       id,
       $"Annulation de  l'événement - {evt.Name}",
       user => EmailTemplates.EventCancellation(user.FirstName, evt.Name, evt.StartDate, evt.CancellationReason));
-    
+
     logger.LogInformation("Événement annulé : {Id}", id);
   }
 
@@ -168,6 +168,37 @@ public class EventService(
     await eventRepository.UpdateAsync(evt);
     await eventRepository.SaveChangesAsync();
     logger.LogInformation("Événement clôturé : {Id}", id);
+  }
+
+  public async Task<EventStatsResponseDto> GetStatsAsync(Guid id)
+  {
+    logger.LogInformation("Récupération des stats de l'événement : {Id}", id);
+
+    Event? evt = await eventRepository.GetByIdAsync(id);
+    if (evt is null)
+      throw new KeyNotFoundException($"Événement {id} introuvable.");
+
+    int confirmed = await eventRepository.GetCurrentParticipantsCountAsync(id);
+    int waiting = await signInRepository.GetWaitingListCountAsync(id);
+
+    return evt.ToEventStatsResponseDto(confirmed, waiting);
+  }
+  
+  public async Task SendReminderAsync(Guid id)
+  {
+    logger.LogInformation("Envoi d'un rappel pour l'événement {Id}", id);
+
+    Event? evt = await eventRepository.GetByIdAsync(id);
+    if (evt is null)
+      throw new KeyNotFoundException($"Événement {id} introuvable.");
+
+    await SendEmailToAllSubscribersAsync(
+      id,
+      $"Rappel — {evt.Name}",
+      user => EmailTemplates.EventReminder(user.FirstName, evt.Name, evt.StartDate, evt.Location)
+    );
+
+    logger.LogInformation("Rappel envoyé pour l'événement {Id}", id);
   }
 
   //Methodes privées
@@ -236,20 +267,6 @@ public class EventService(
         });
       }
     }
-  }
-
-  public async Task<EventStatsResponseDto> GetStatsAsync(Guid id)
-  {
-    logger.LogInformation("Récupération des stats de l'événement : {Id}", id);
-
-    Event? evt = await eventRepository.GetByIdAsync(id);
-    if (evt is null)
-      throw new KeyNotFoundException($"Événement {id} introuvable.");
-
-    int confirmed = await eventRepository.GetCurrentParticipantsCountAsync(id);
-    int waiting = await signInRepository.GetWaitingListCountAsync(id);
-
-    return evt.ToEventStatsResponseDto(confirmed, waiting);
   }
 
   private async Task SendEmailToAllSubscribersAsync(Guid eventId, string subject, Func<User, string> buildBody)
