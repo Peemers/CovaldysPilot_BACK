@@ -10,7 +10,7 @@ public interface IEventService
   Task<EventResponseDto> CreateAsync(CreateEventRequestDto dto);
   Task<EventResponseDto> UpdateAsync(Guid id, UpdateEventRequestDto dto);
   Task DeleteAsync(Guid id);
-  Task CancelAsync(Guid id);
+  Task CancelAsync(Guid id, string? cancellationReason = null);
   Task StartAsync(Guid id);
   Task CloseAsync(Guid id);
   Task<EventStatsResponseDto> GetStatsAsync(Guid id);

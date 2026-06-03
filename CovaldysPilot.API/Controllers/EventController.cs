@@ -68,10 +68,10 @@ public class EventController(
   [HttpPatch("{id:guid}/cancel")]
   [Authorize(Roles = "Admin")]
   [EndpointSummary("Annuler un événement")]
-  public async Task<IActionResult> Cancel(Guid id)
+  public async Task<IActionResult> Cancel(Guid id, [FromBody] CancelEventRequestDto dto)
   {
     logger.LogInformation("PATCH /api/events/{Id}/cancel", id);
-    await eventService.CancelAsync(id);
+    await eventService.CancelAsync(id, dto.CancellationReason);
     return NoContent();
   }
 
