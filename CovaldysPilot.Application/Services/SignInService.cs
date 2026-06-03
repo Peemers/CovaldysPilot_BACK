@@ -1,5 +1,6 @@
 ﻿using CovaldysPilot.Application.DTOs.SignIn.Request;
 using CovaldysPilot.Application.DTOs.SignIn.Response;
+using CovaldysPilot.Application.Email.Templates;
 using CovaldysPilot.Application.Interfaces.Repositories;
 using CovaldysPilot.Application.Interfaces.Services;
 using CovaldysPilot.Application.Mappers;
@@ -12,6 +13,8 @@ namespace CovaldysPilot.Application.Services;
 public class SignInService(
   ISignInRepository signInRepository,
   IEventRepository eventRepository,
+  IEmailService emailService,
+  IUserRepository userRepository,
   ILogger<SignInService> logger) : ISignInService
 {
   #region RegisterSignIn
@@ -64,6 +67,17 @@ public class SignInService(
     await signInRepository.SaveChangesAsync();
 
     logger.LogInformation("Inscription créée — EnAttente: {IsWaiting}", signIn.IsOnWaitingList);
+    
+    User? user = await userRepository.GetByIdAsync(userId);
+    if (user != null)
+    {
+      await emailService.SendEmail(
+        user.Email,
+        user.FirstName,
+        $"Confirmation d'inscription à l'événement {evt.Name}",
+        EmailTemplates.RegistrationConfirmation(user.FirstName, evt.Name, evt.StartDate, evt.Location)
+      );
+    }
     return signIn.ToSignInResponseDto();
   }
 
@@ -138,6 +152,7 @@ public class SignInService(
   #region PromoteFirstOnWaitingListAsync
 
   //Methode prive de verif
+  
   private async Task PromoteFirstOnWaitingListAsync(Guid eventId)
   {
     SignIn? firstOnWaiting = await signInRepository.GetFirstOnWaitingListAsync(eventId);
