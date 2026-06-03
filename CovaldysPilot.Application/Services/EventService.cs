@@ -27,8 +27,8 @@ public class EventService(
     foreach (Event evt in events)
     {
       int currentParticipants = await eventRepository.GetCurrentParticipantsCountAsync(evt.Id);
-      (bool canRegister, bool isRegistered) = CalculateRegistrationStatus(evt, currentUserId, currentParticipants);
-      result.Add(evt.ToEventResponseDto(currentParticipants, canRegister, isRegistered));
+      (bool canRegister, bool isRegistered, Guid? signInId) = CalculateRegistrationStatus(evt, currentUserId, currentParticipants);
+      result.Add(evt.ToEventResponseDto(currentParticipants, canRegister, isRegistered, signInId:  signInId));
     }
 
     return result;
@@ -41,10 +41,10 @@ public class EventService(
     if (evt == null) return null;
 
     int currentParticipants = await eventRepository.GetCurrentParticipantsCountAsync(id);
-    (bool canRegister, bool isRegistered) = CalculateRegistrationStatus(evt, currentUserId, currentParticipants);
+    (bool canRegister, bool isRegistered, Guid? signInId) = CalculateRegistrationStatus(evt, currentUserId, currentParticipants);
     int? waitingListPosition = GetWaitingListPosition(evt, currentUserId);
 
-    return evt.ToEventResponseDto(currentParticipants, canRegister, isRegistered, waitingListPosition);
+    return evt.ToEventResponseDto(currentParticipants, canRegister, isRegistered, waitingListPosition, signInId);
   }
 
   public async Task<EventResponseDto> CreateAsync(CreateEventRequestDto dto)
@@ -101,6 +101,12 @@ public class EventService(
 
     EnsureEventExists(evt, id);
     EnsureEventStatus(evt!, EventStatus.EnAttente, "supprimés");
+    
+    IEnumerable<SignIn> signIns = await signInRepository.GetByEventAsync(id);
+    foreach (SignIn signIn in signIns)
+    {
+      await signInRepository.DeleteAsync(signIn.Id);
+    }
 
     await eventRepository.DeleteAsync(id);
     await eventRepository.SaveChangesAsync();
@@ -231,19 +237,20 @@ public class EventService(
       throw new InvalidOperationException("Le nombre minimum doit être inférieur ou égal au maximum.");
   }
 
-  private static (bool canRegister, bool isRegistered) CalculateRegistrationStatus(
+  private static (bool canRegister, bool isRegistered, Guid? signInId) CalculateRegistrationStatus(
     Event evt, Guid? currentUserId, int currentParticipants)
   {
     if (!currentUserId.HasValue)
-      return (false, false);
-
+      return (false, false, null);
+    
+    SignIn? signIn = evt.SignIns.FirstOrDefault(s => s.UserId == currentUserId.Value && !s.IsOnWaitingList);
     bool isRegistered = evt.SignIns.Any(s => s.UserId == currentUserId.Value && !s.IsOnWaitingList);
     bool canRegister = !isRegistered &&
                        evt.Status == EventStatus.EnAttente &&
                        evt.RegistrationDeadline >= DateTime.UtcNow &&
                        (currentParticipants < evt.MaxParticipants);
 
-    return (canRegister, isRegistered);
+    return (canRegister, isRegistered, signIn?.Id);
   }
 
   private static int? GetWaitingListPosition(Event evt, Guid? currentUserId)

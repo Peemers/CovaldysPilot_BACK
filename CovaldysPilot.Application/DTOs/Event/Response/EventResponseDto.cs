@@ -22,6 +22,7 @@ public class EventResponseDto
   public DateTime? UpdatedAt { get; set; }
   public List<CategoryResponseDto> Categories { get; set; } = new List<CategoryResponseDto>();
   public decimal? Price { get; set; }
+  public string? SignInId { get; set; }
 
   // Champs calculés
   public bool CanRegister { get; set; }

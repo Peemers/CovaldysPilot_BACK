@@ -18,6 +18,7 @@ public class EventRepository(CovaldysPilotDbContext context) : IEventRepository
     => await context.Events
       .Include(e => e.EventCategories)
       .ThenInclude(ec => ec.Category)
+      .Include(e => e.SignIns)
       .OrderByDescending(e => e.UpdatedAt ?? e.CreatedAt)
       .ToListAsync();
 
