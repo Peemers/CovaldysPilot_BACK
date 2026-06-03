@@ -68,10 +68,10 @@ public class EventController(
   [HttpPatch("{id:guid}/cancel")]
   [Authorize(Roles = "Admin")]
   [EndpointSummary("Annuler un événement")]
-  public async Task<IActionResult> Cancel(Guid id)
+  public async Task<IActionResult> Cancel(Guid id, [FromBody] CancelEventRequestDto dto)
   {
     logger.LogInformation("PATCH /api/events/{Id}/cancel", id);
-    await eventService.CancelAsync(id);
+    await eventService.CancelAsync(id, dto.CancellationReason);
     return NoContent();
   }
 
@@ -93,6 +93,16 @@ public class EventController(
     logger.LogInformation("PATCH /api/events/{Id}/close", id);
     await eventService.CloseAsync(id);
     return NoContent();
+  }
+  
+  [HttpGet("{id:guid}/stats")]
+  [AllowAnonymous]
+  [EndpointSummary("Récupérer les statistiques d'un événement")]
+  public async Task<ActionResult<EventStatsResponseDto>> GetStats(Guid id)
+  {
+    logger.LogInformation("GET /api/events/{Id}/stats", id);
+    EventStatsResponseDto stats = await eventService.GetStatsAsync(id);
+    return Ok(stats);
   }
 
   //methode privée, recuperation de l'id dans le token petite astuce reçue

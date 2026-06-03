@@ -10,4 +10,8 @@ public interface ISignInService
   Task<IEnumerable<SignInResponseDto>> GetByEventAsync(Guid eventId);
   Task<IEnumerable<SignInResponseDto>> GetByUserAsync(Guid userId);
   Task ValidatePayment(Guid signInId);
+  
+  //administration
+  Task<SignInResponseDto> AdminRegisterAsync(Guid userId, Guid eventId);
+  Task AdminUnregisterAsync(Guid signInId);
 }

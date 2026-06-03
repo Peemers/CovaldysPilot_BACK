@@ -1,5 +1,6 @@
 ﻿using CovaldysPilot.Application.DTOs.Event.Request;
 using CovaldysPilot.Application.DTOs.Event.Response;
+using CovaldysPilot.Application.Email.Templates;
 using CovaldysPilot.Application.Interfaces.Repositories;
 using CovaldysPilot.Application.Interfaces.Services;
 using CovaldysPilot.Application.Mappers;
@@ -12,6 +13,9 @@ namespace CovaldysPilot.Application.Services;
 public class EventService(
   IEventRepository eventRepository,
   ICategoryRepository categoryRepository,
+  ISignInRepository signInRepository,
+  IEmailService emailService,
+  IUserRepository userRepository,
   ILogger<EventService> logger) : IEventService
 {
   public async Task<IEnumerable<EventResponseDto>> GetAllAsync(Guid? currentUserId = null)
@@ -57,10 +61,10 @@ public class EventService(
 
     Event? createdEvent = await eventRepository.GetByIdWithDetailsAsync(evt.Id);
     logger.LogInformation("Événement créé : {Name}", dto.Name);
-    
+
     if (createdEvent == null)
       throw new InvalidOperationException("Erreur lors de la récupération de l'événement créé.");
-    
+
     return createdEvent.ToEventResponseDto();
   }
 
@@ -103,7 +107,7 @@ public class EventService(
     logger.LogInformation("Événement supprimé : {Id}", id);
   }
 
-  public async Task CancelAsync(Guid id)
+  public async Task CancelAsync(Guid id, string? cancellationReason = null)
   {
     logger.LogInformation("Annulation de l'événement {Id}", id);
     Event? evt = await eventRepository.GetByIdAsync(id);
@@ -114,10 +118,17 @@ public class EventService(
       throw new InvalidOperationException("Seuls les événements en attente ou en cours peuvent être annulés.");
 
     evt.Status = EventStatus.Annule;
+    evt.CancellationReason = cancellationReason;
     evt.UpdatedAt = DateTime.UtcNow;
 
     await eventRepository.UpdateAsync(evt);
     await eventRepository.SaveChangesAsync();
+
+    await SendEmailToAllSubscribersAsync(
+      id,
+      $"Annulation de  l'événement - {evt.Name}",
+      user => EmailTemplates.EventCancellation(user.FirstName, evt.Name, evt.StartDate, evt.CancellationReason));
+
     logger.LogInformation("Événement annulé : {Id}", id);
   }
 
@@ -157,6 +168,37 @@ public class EventService(
     await eventRepository.UpdateAsync(evt);
     await eventRepository.SaveChangesAsync();
     logger.LogInformation("Événement clôturé : {Id}", id);
+  }
+
+  public async Task<EventStatsResponseDto> GetStatsAsync(Guid id)
+  {
+    logger.LogInformation("Récupération des stats de l'événement : {Id}", id);
+
+    Event? evt = await eventRepository.GetByIdAsync(id);
+    if (evt is null)
+      throw new KeyNotFoundException($"Événement {id} introuvable.");
+
+    int confirmed = await eventRepository.GetCurrentParticipantsCountAsync(id);
+    int waiting = await signInRepository.GetWaitingListCountAsync(id);
+
+    return evt.ToEventStatsResponseDto(confirmed, waiting);
+  }
+  
+  public async Task SendReminderAsync(Guid id)
+  {
+    logger.LogInformation("Envoi d'un rappel pour l'événement {Id}", id);
+
+    Event? evt = await eventRepository.GetByIdAsync(id);
+    if (evt is null)
+      throw new KeyNotFoundException($"Événement {id} introuvable.");
+
+    await SendEmailToAllSubscribersAsync(
+      id,
+      $"Rappel — {evt.Name}",
+      user => EmailTemplates.EventReminder(user.FirstName, evt.Name, evt.StartDate, evt.Location)
+    );
+
+    logger.LogInformation("Rappel envoyé pour l'événement {Id}", id);
   }
 
   //Methodes privées
@@ -223,6 +265,19 @@ public class EventService(
           EventId = evt.Id,
           CategoryId = categoryId
         });
+      }
+    }
+  }
+
+  private async Task SendEmailToAllSubscribersAsync(Guid eventId, string subject, Func<User, string> buildBody)
+  {
+    IEnumerable<SignIn> signIns = await signInRepository.GetByEventAsync(eventId);
+    foreach (SignIn signIn in signIns)
+    {
+      User? user = await userRepository.GetByIdAsync(signIn.UserId);
+      if (user != null)
+      {
+        await emailService.SendEmail(user.Email, user.FirstName, subject, buildBody(user));
       }
     }
   }
