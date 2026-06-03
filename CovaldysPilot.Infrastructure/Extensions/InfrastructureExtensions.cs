@@ -1,6 +1,7 @@
 ﻿using CovaldysPilot.Application.Interfaces.Repositories;
 using CovaldysPilot.Application.Interfaces.Services;
 using CovaldysPilot.Infrastructure.DataBase.Context;
+using CovaldysPilot.Infrastructure.Email;
 using CovaldysPilot.Infrastructure.Repositories;
 using CovaldysPilot.Infrastructure.Security;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +27,10 @@ public static class InfrastructureExtensions
 
     // Services
     services.AddScoped<IJwtService, JwtService>();
+    
+    //Email
+    services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
+    services.AddScoped<IEmailService, EmailService>();
 
     return services;
   }
