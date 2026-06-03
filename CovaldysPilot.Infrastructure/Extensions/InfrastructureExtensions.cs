@@ -26,6 +26,7 @@ public static class InfrastructureExtensions
     services.AddScoped<ISignInRepository, SignInRepository>();
     services.AddScoped<IArticleRepository, ArticleRepository>();
     services.AddScoped<IReviewRepository, ReviewRepository>();
+    services.AddScoped<ISiteConfigurationRepository, SiteConfigurationRepository>();
 
     // Services
     services.AddScoped<IJwtService, JwtService>();
