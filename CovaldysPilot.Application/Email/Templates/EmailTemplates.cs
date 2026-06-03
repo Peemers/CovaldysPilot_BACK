@@ -34,4 +34,15 @@ public static class EmailTemplates
                 <p>L'équipe Covaldys</p>
             """;
   }
+  
+  public static string WaitingListPromotion(string firstName, string eventName, DateTime startDate, string? location)
+  {
+    return $"""
+                <h2>Bonjour {firstName} !</h2>
+                <p>Bonne nouvelle ! Une place s'est libérée pour l'événement <strong>{eventName}</strong> prévu le <strong>{startDate:dd/MM/yyyy à HH:mm}</strong>.</p>
+                <p><strong>Lieu :</strong> {location ?? "À définir"}</p>
+                <p>Votre inscription est maintenant confirmée !</p>
+                <p>À bientôt chez Covaldys !</p>
+            """;
+  }
 }

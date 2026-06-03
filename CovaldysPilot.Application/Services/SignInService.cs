@@ -166,6 +166,18 @@ public class SignInService(
     await signInRepository.SaveChangesAsync();
 
     logger.LogInformation("Membre {UserId} promu depuis la liste d'attente", firstOnWaiting.UserId);
+    
+    User? user = await userRepository.GetByIdAsync(firstOnWaiting.UserId);
+    Event? evt = await eventRepository.GetByIdAsync(eventId);
+    if (user != null && evt != null)
+    {
+      await emailService.SendEmail(
+        user.Email,
+        user.FirstName,
+        $"Bonne nouvelle — Place confirmée pour {evt.Name} !",
+        EmailTemplates.WaitingListPromotion(user.FirstName, evt.Name, evt.StartDate, evt.Location)
+      );
+    }
   }
 
   #endregion
