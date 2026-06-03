@@ -94,6 +94,16 @@ public class EventController(
     await eventService.CloseAsync(id);
     return NoContent();
   }
+  
+  [HttpGet("{id:guid}/stats")]
+  [AllowAnonymous]
+  [EndpointSummary("Récupérer les statistiques d'un événement")]
+  public async Task<ActionResult<EventStatsResponseDto>> GetStats(Guid id)
+  {
+    logger.LogInformation("GET /api/events/{Id}/stats", id);
+    EventStatsResponseDto stats = await eventService.GetStatsAsync(id);
+    return Ok(stats);
+  }
 
   //methode privée, recuperation de l'id dans le token petite astuce reçue
   private Guid? GetCurrentUserId()

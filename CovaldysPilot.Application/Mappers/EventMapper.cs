@@ -75,4 +75,21 @@ public static class EventMapper
     evt.UpdatedAt = DateTime.UtcNow;
     evt.Price = dto.Price;
   }
+  public static EventStatsResponseDto ToEventStatsResponseDto(
+    this Event evt,
+    int confirmedParticipants,
+    int waitingListCount)
+  {
+    return new EventStatsResponseDto
+    {
+      EventId = evt.Id,
+      EventName = evt.Name,
+      ConfirmedParticipants = confirmedParticipants,
+      WaitingListCount = waitingListCount,
+      MaxParticipants = evt.MaxParticipants,
+      FillRate = evt.MaxParticipants > 0
+        ? Math.Round((double)confirmedParticipants / evt.MaxParticipants * 100, 2)
+        : 0
+    };
+  }
 }

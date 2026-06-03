@@ -12,6 +12,7 @@ namespace CovaldysPilot.Application.Services;
 public class EventService(
   IEventRepository eventRepository,
   ICategoryRepository categoryRepository,
+  ISignInRepository signInRepository,
   ILogger<EventService> logger) : IEventService
 {
   public async Task<IEnumerable<EventResponseDto>> GetAllAsync(Guid? currentUserId = null)
@@ -225,5 +226,18 @@ public class EventService(
         });
       }
     }
+  }
+  public async Task<EventStatsResponseDto> GetStatsAsync(Guid id)
+  {
+    logger.LogInformation("Récupération des stats de l'événement : {Id}", id);
+
+    Event? evt = await eventRepository.GetByIdAsync(id);
+    if (evt is null)
+      throw new KeyNotFoundException($"Événement {id} introuvable.");
+
+    int confirmed = await eventRepository.GetCurrentParticipantsCountAsync(id);
+    int waiting = await signInRepository.GetWaitingListCountAsync(id);
+
+    return evt.ToEventStatsResponseDto(confirmed, waiting);
   }
 }

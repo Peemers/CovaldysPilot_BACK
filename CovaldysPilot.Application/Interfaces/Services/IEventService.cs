@@ -13,4 +13,5 @@ public interface IEventService
   Task CancelAsync(Guid id);
   Task StartAsync(Guid id);
   Task CloseAsync(Guid id);
+  Task<EventStatsResponseDto> GetStatsAsync(Guid id);
 }

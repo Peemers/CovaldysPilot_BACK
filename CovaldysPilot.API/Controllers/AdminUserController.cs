@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CovaldysPilot.API.Controllers;
 
+//controller pour admin séparé pour éviter les erreurs de Authorize
+
 [ApiController]
 [Route("api/admin/users")]
 [Authorize(Roles = "Admin")]

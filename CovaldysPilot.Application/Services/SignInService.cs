@@ -197,14 +197,15 @@ public class SignInService(
 
     if (isFull && !evt.IsWaitingListActive)
       throw new InvalidOperationException("L'événement est complet et ne dispose pas de file d'attente.");
-
+    //mapping ici car 2 id
     SignIn signIn = new SignIn
     {
       UserId = userId,
       EventId = eventId,
       RegistrationDate = DateTime.UtcNow,
       IsOnWaitingList = isFull,
-      IsPaymentValid = false
+      IsPaymentValid = false,
+      CreatedAt = DateTime.UtcNow
     };
 
     if (isFull)
