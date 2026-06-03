@@ -1,4 +1,5 @@
 ﻿using CovaldysPilot.Application.DTOs.User.Response;
+using CovaldysPilot.Application.Helpers;
 using CovaldysPilot.Application.Interfaces.Repositories;
 using CovaldysPilot.Application.Interfaces.Services;
 using CovaldysPilot.Application.Mappers;
@@ -36,5 +37,21 @@ public class UserService(
     await userRepository.DeleteAsync(id);
     await userRepository.SaveChangesAsync();
     logger.LogInformation("Membre supprimé : {Id}", id);
+  }
+
+  public async Task<byte[]> ExportMembersAsync(string? filter = null)
+  {
+    logger.LogInformation("Export des membres - Filtre: {Filter}", filter ?? "all");
+
+    IEnumerable<Domain.Entities.User> users = await userRepository.GetAllAsync();
+
+    users = filter switch
+    {
+      "effectif" => users.Where(u => u.IsMembershipUpToDate),
+      "normal" => users.Where(u => !u.IsMembershipUpToDate),
+      _ => users
+    };
+
+    return ExcelHelper.GenerateMembersExcel(users);
   }
 }

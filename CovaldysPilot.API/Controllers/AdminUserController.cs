@@ -41,4 +41,17 @@ public class AdminUserController(
     await userService.DeleteAsync(id);
     return NoContent();
   }
+
+  [HttpGet("export")]
+  [EndpointSummary("Exporter la liste des membres en Excel")]
+  // pas oublié filter si je veux une autre catégorie (membre effectif etc), fromquery car c# doit regarder l'url pour le para
+  public async Task<IActionResult> Export([FromQuery] string? filter = null)
+  {
+    logger.LogInformation("GET /api/admin/users/export - Filtre: {Filter}", filter ?? "all");
+    byte[] fileBytes = await userService.ExportMembersAsync(filter);
+    //MIME officiel pour excel sans ça le navigateur ne sais rien faire du .xlsx
+    return File(
+      fileBytes, "application/vnd.openxmlformats-officedocument" +
+                 ".spreadsheetml.sheet", $"membres_{filter ?? "all"}_{DateTime.UtcNow:yyyyMMdd}.xlsx"); //nom du fichier
+  }
 }
