@@ -24,6 +24,7 @@ public static class InfrastructureExtensions
     services.AddScoped<ICategoryRepository, CategoryRepository>();
     services.AddScoped<IEventRepository, EventRepository>();
     services.AddScoped<ISignInRepository, SignInRepository>();
+    services.AddScoped<IArticleRepository, ArticleRepository>();
 
     // Services
     services.AddScoped<IJwtService, JwtService>();

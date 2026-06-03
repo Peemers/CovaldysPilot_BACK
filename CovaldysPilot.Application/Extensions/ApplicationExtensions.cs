@@ -13,6 +13,7 @@ public static class ApplicationExtensions
     services.AddScoped<IEventService, EventService>();
     services.AddScoped<ISignInService, SignInService>();
     services.AddScoped<IUserService, UserService>();
+    services.AddScoped<IArticleService, ArticleService>();
         
     return services;
   }
