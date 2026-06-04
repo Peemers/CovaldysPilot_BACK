@@ -22,6 +22,8 @@ public class EventController(
     logger.LogInformation("GET /api/events - UserId: {UserId}", currentUserId);
     IEnumerable<EventResponseDto> events = await eventService.GetAllAsync(currentUserId);
     return Ok(events);
+    
+    //todo à revoir ce truc..........................................................................
   }
 
   [HttpGet("{id:guid}")]
