@@ -19,11 +19,10 @@ public class EventController(
   public async Task<ActionResult<IEnumerable<EventResponseDto>>> GetAll()
   {
     Guid? currentUserId = GetCurrentUserId();
+    logger.LogCritical(" !!! UserId récupéré : {UserId}", currentUserId);
     logger.LogInformation("GET /api/events - UserId: {UserId}", currentUserId);
     IEnumerable<EventResponseDto> events = await eventService.GetAllAsync(currentUserId);
     return Ok(events);
-    
-    //todo à revoir ce truc..........................................................................
   }
 
   [HttpGet("{id:guid}")]
@@ -110,7 +109,7 @@ public class EventController(
   //methode privée, recuperation de l'id dans le token petite astuce reçue
   private Guid? GetCurrentUserId()
   {
-    string? userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    string? userIdClaim = User.FindFirstValue("sub");
     return Guid.TryParse(userIdClaim, out Guid userId) ? userId : null;
   }
 }

@@ -64,7 +64,7 @@ public class ReviewController(
 
     private Guid? GetCurrentUserId()
     {
-        string? userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        string? userIdClaim = User.FindFirstValue("sub");
         return Guid.TryParse(userIdClaim, out Guid userId) ? userId : null;
     }
 }

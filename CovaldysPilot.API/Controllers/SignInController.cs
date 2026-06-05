@@ -72,7 +72,7 @@ public class SignInController(
 
   private Guid GetCurrentUserId()
   {
-    string? userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    string? userIdClaim = User.FindFirstValue("sub");
     if (!Guid.TryParse(userIdClaim, out Guid userId))
       throw new UnauthorizedAccessException("Utilisateur non authentifié.");
     return userId;
