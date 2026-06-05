@@ -322,13 +322,6 @@ namespace CovaldysPilot.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("SiteConfigurations");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            IsMaintenanceMode = false
-                        });
                 });
 
             modelBuilder.Entity("CovaldysPilot.Domain.Entities.User", b =>
