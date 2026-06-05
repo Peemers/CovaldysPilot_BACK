@@ -8,6 +8,10 @@ public static class JwtExtensions
 {
   public static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
   {
+    // Désactive le mapping automatique des claims Microsoft pour regler le bug du siteconfig (claude merci)
+    System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+    System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
+    
     services.AddAuthentication(options =>
       {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
