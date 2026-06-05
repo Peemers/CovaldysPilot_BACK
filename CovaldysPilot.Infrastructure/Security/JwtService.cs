@@ -26,8 +26,10 @@ public class JwtService(IConfiguration configuration) : IJwtService
     {
       new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
       new Claim(JwtRegisteredClaimNames.Email, user.Email),
-      new Claim(ClaimTypes.Role, user.Role.ToString()),
+      new Claim("role", user.Role.ToString()),
       new Claim("pseudo", user.Pseudo),
+      new Claim("firstname", user.FirstName),
+      new Claim("lastname", user.LastName ?? ""),
       new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
     };
 

@@ -24,7 +24,8 @@ public static class JwtExtensions
           ValidIssuer = configuration["JwtSettings:Issuer"],
           ValidAudience = configuration["JwtSettings:Audience"],
           IssuerSigningKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(configuration["JwtSettings:Secret"]!))
+            Encoding.UTF8.GetBytes(configuration["JwtSettings:Secret"]!)),
+          RoleClaimType = "role" // mapping pour continuer a faire fonctionner le authorize=role
         };
       });
 
