@@ -2,7 +2,9 @@ using CovaldysPilot.API.Extensions;
 using CovaldysPilot.API.Middlewares;
 using CovaldysPilot.API.Scalar;
 using CovaldysPilot.Application.Extensions;
+using CovaldysPilot.Infrastructure.DataBase.Context;
 using CovaldysPilot.Infrastructure.Extensions;
+using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
 
@@ -62,6 +64,12 @@ app.MapControllers();
 if (!app.Environment.IsDevelopment())
 {
   app.UseRateLimiter();
+}
+
+using (var scope = app.Services.CreateScope()) //verification de migration et applique en auto la derniere.
+{
+  var db = scope.ServiceProvider.GetRequiredService<CovaldysPilotDbContext>();
+  db.Database.Migrate();
 }
 
 app.Run();
