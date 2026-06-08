@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: covaldys_sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=${SA_PASSWORD}
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    healthcheck: #checkdb
+      test: [ "CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P ${SA_PASSWORD} -Q 'SELECT 1' -No" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  api:
+    build:
+      context: .
+      dockerfile: CovaldysPilot.API/Dockerfile
+    container_name: covaldys_api
+    ports:
+      - "5000:8080"
+    depends_on:
+      sqlserver:
+        condition: service_healthy #doit etre healthy apres le healthCheck.
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=${CONNECTION_STRING}
+      - JwtSettings__Secret=${JWT_SECRET}
+      - JwtSettings__Issuer=${JWT_ISSUER}
+      - JwtSettings__Audience=${JWT_AUDIENCE}
+      - JwtSettings__ExpiryMinutes=${JWT_EXPIRY_MINUTES}
+      - JwtSettings__RefreshTokenExpiryDays=${JWT_REFRESH_EXPIRY_DAYS}
+      - EmailSettings__Host=${EMAIL_HOST}
+      - EmailSettings__Port=${EMAIL_PORT}
+      - EmailSettings__Username=${EMAIL_USERNAME}
+      - EmailSettings__Password=${EMAIL_PASSWORD}
+      - EmailSettings__FromEmail=${EMAIL_FROM}
+      - EmailSettings__FromName=${EMAIL_FROM_NAME}
+
+  angular:
+    build:
+      context: ../CovaldysPilot_FRONT
+      dockerfile: Dockerfile
+    container_name: covaldys_angular
+    ports:
+      - "4200:80"
+    depends_on:
+      - api
+
+volumes:
+  sqlserver_data:
