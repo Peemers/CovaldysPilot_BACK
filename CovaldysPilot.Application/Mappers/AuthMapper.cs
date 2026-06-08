@@ -19,7 +19,7 @@ public static class AuthMapper
       PasswordHash = passwordHash,
       Role = Role.Membre,
       Birthday = dto.Birthday,
-      CreatedAt = DateTime.UtcNow
+      CreatedAt = DateTime.UtcNow,
     };
   }
 
@@ -36,6 +36,7 @@ public static class AuthMapper
       ExpiresAt = expiresAt,
       FirstName =  user.FirstName,
       LastName =  user.LastName,
+      IsMembershipUpToDate = user.IsMembershipUpToDate
     };
   }
 

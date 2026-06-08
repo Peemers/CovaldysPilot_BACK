@@ -30,6 +30,7 @@ public class JwtService(IConfiguration configuration) : IJwtService
       new Claim("pseudo", user.Pseudo),
       new Claim("firstname", user.FirstName),
       new Claim("lastname", user.LastName ?? ""),
+      new Claim("isMembershipUpToDate", user.IsMembershipUpToDate.ToString().ToLower()),
       new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
     };
 
