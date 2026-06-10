@@ -43,6 +43,8 @@ services:
       - EmailSettings__Password=${EMAIL_PASSWORD}
       - EmailSettings__FromEmail=${EMAIL_FROM}
       - EmailSettings__FromName=${EMAIL_FROM_NAME}
+      - AzureStorage__ConnectionString=${AZURE_STORAGE_CONNECTION_STRING}
+      - AzureStorage__ContainerName=${AZURE_STORAGE_CONTAINER_NAME}
 
   angular:
     build:

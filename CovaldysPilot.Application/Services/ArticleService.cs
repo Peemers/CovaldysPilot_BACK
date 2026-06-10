@@ -77,4 +77,50 @@ public class ArticleService(
         await articleRepository.SaveChangesAsync();
         logger.LogInformation("Article supprimé : {Id}", id);
     }
+    public async Task<ArticleResponseDto> AddImageAsync(Guid id, string imageUrl)
+    {
+        logger.LogInformation("Ajout d'une image à l'article {Id}", id);
+        Article? article = await articleRepository.GetByIdWithImageAsync(id);
+
+        if (article is null)
+            throw new KeyNotFoundException($"Article {id} introuvable.");
+
+        if (article.Images.Count >= 2)
+            throw new InvalidOperationException("Un article ne peut pas avoir plus de 2 images.");
+
+        var image = new ArticleImage
+        {
+            Id = Guid.NewGuid(),
+            ArticleId = id,
+            Url = imageUrl,
+            CreatedAt = DateTime.UtcNow
+        };
+
+        await articleRepository.AddImageAsync(image); // 👈 insert direct
+        await articleRepository.SaveChangesAsync();
+
+        Article? updated = await articleRepository.GetByIdWithImageAsync(id);
+        logger.LogInformation("Image ajoutée à l'article {Id}", id);
+        return updated!.ToArticleResponseDto();
+    }
+
+    public async Task DeleteImageAsync(Guid articleId, Guid imageId)
+    {
+        logger.LogInformation("Suppression de l'image {ImageId} de l'article {ArticleId}", imageId, articleId);
+        Article? article = await articleRepository.GetByIdWithImageAsync(articleId);
+
+        if (article is null)
+            throw new KeyNotFoundException($"Article {articleId} introuvable.");
+
+        ArticleImage? image = article.Images.FirstOrDefault(i => i.Id == imageId);
+        if (image is null)
+            throw new KeyNotFoundException($"Image {imageId} introuvable.");
+
+        article.Images.Remove(image);
+
+        await articleRepository.UpdateAsync(article);
+        await articleRepository.SaveChangesAsync();
+
+        logger.LogInformation("Image {ImageId} supprimée", imageId);
+    }
 }
