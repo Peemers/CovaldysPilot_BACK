@@ -15,4 +15,5 @@ public interface IEventService
   Task CloseAsync(Guid id);
   Task<EventStatsResponseDto> GetStatsAsync(Guid id);
   Task SendReminderAsync(Guid id);
+  Task UpdateCoverImageAsync(Guid id, string imageUrl);
 }

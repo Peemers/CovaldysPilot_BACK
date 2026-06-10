@@ -44,4 +44,7 @@ public class ArticleRepository(CovaldysPilotDbContext context) : IArticleReposit
 
   public async Task SaveChangesAsync()
     => await context.SaveChangesAsync();
+  
+  public async Task AddImageAsync(ArticleImage image)
+    => await context.ArticleImages.AddAsync(image);
 }

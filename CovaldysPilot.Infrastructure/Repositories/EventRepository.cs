@@ -13,6 +13,9 @@ public class EventRepository(CovaldysPilotDbContext context) : IEventRepository
 
   public async Task<IEnumerable<Event>> GetAllAsync()
     => await context.Events.ToListAsync();
+  
+  public async Task<bool>  AnyByCategoryIdAsync(Guid categoryId)
+    =>  await context.Events.AnyAsync(e => e.EventCategories .Any(ec => ec.CategoryId == categoryId));
 
   public async Task<IEnumerable<Event>> GetAllWithCategoriesAsync()
     => await context.Events

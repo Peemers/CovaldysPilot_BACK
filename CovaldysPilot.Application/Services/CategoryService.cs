@@ -3,12 +3,14 @@ using CovaldysPilot.Application.DTOs.Category.Response;
 using CovaldysPilot.Application.Interfaces.Repositories;
 using CovaldysPilot.Application.Interfaces.Services;
 using CovaldysPilot.Application.Mappers;
+using CovaldysPilot.Domain.Entities;
 using Microsoft.Extensions.Logging;
 
 namespace CovaldysPilot.Application.Services;
 
 public class CategoryService(
   ICategoryRepository categoryRepository,
+  IEventRepository eventRepository,
   ILogger<CategoryService> logger) : ICategoryService 
 {
   public async Task<IEnumerable<CategoryResponseDto>> GetAllAsync()
@@ -36,6 +38,11 @@ public class CategoryService(
   public async Task DeleteAsync(Guid id)
   {
     logger.LogInformation("Suppression de la catégorie : {Id}", id);
+    if ( await eventRepository.AnyByCategoryIdAsync(id))
+    {
+      logger.LogInformation("Impossbile de supprimer la catégorie {id}", id);
+      throw new InvalidOperationException("Impossible de supprimer cette catégorie car elle est liée à un ou plusieurs événements.");
+    }
     await categoryRepository.DeleteAsync(id);
     await categoryRepository.SaveChangesAsync();
     logger.LogInformation("Catégorie supprimée : {Id}", id);
