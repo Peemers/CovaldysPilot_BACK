@@ -10,4 +10,6 @@ public class AuthResponseDto
   public required DateTime ExpiresAt { get; set; }
   public required string FirstName { get; set; }
   public string? LastName { get; set; }
+  
+  public bool IsMembershipUpToDate { get; set; }
 }
