@@ -4,6 +4,7 @@ using CovaldysPilot.Infrastructure.DataBase.Context;
 using CovaldysPilot.Infrastructure.Email;
 using CovaldysPilot.Infrastructure.Repositories;
 using CovaldysPilot.Infrastructure.Security;
+using CovaldysPilot.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,6 +31,7 @@ public static class InfrastructureExtensions
 
     // Services
     services.AddScoped<IJwtService, JwtService>();
+    services.AddScoped<IBlobStorageService,  BlobStorageService>();
     
     //Email
     services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));

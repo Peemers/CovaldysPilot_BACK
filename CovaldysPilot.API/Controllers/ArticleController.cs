@@ -11,6 +11,7 @@ namespace CovaldysPilot.API.Controllers;
 [Route("api/[controller]")]
 public class ArticleController(
     IArticleService articleService,
+    IBlobStorageService blobStorageService,
     ILogger<ArticleController> logger) : ControllerBase
 {
     [HttpGet]
@@ -62,6 +63,39 @@ public class ArticleController(
     {
         logger.LogInformation("DELETE /api/articles/{Id}", id);
         await articleService.DeleteAsync(id);
+        return NoContent();
+    }
+    
+    [HttpPost("{id:guid}/upload-image")]
+    [Authorize(Roles = "Admin")]
+    [EndpointSummary("Ajouter une image à un article")]
+    public async Task<ActionResult<ArticleResponseDto>> UploadImage(Guid id, IFormFile file)
+    {
+        if (file == null || file.Length == 0)
+            return BadRequest("Aucun fichier fourni.");
+
+        var allowedTypes = new[] { "image/jpeg", "image/png", "image/webp" };
+        if (!allowedTypes.Contains(file.ContentType))
+            return BadRequest("Format non supporté. Utilisez JPG, PNG ou WebP.");
+
+        if (file.Length > 10 * 1024 * 1024)
+            return BadRequest("L'image ne doit pas dépasser 10MB.");
+
+        logger.LogInformation("POST /api/articles/{Id}/upload-image", id);
+
+        await using var stream = file.OpenReadStream();
+        var url = await blobStorageService.UploadAsync(stream, file.FileName, file.ContentType);
+        ArticleResponseDto article = await articleService.AddImageAsync(id, url);
+        return Ok(article);
+    }
+
+    [HttpDelete("{id:guid}/images/{imageId:guid}")]
+    [Authorize(Roles = "Admin")]
+    [EndpointSummary("Supprimer une image d'un article")]
+    public async Task<IActionResult> DeleteImage(Guid id, Guid imageId)
+    {
+        logger.LogInformation("DELETE /api/articles/{Id}/images/{ImageId}", id, imageId);
+        await articleService.DeleteImageAsync(id, imageId);
         return NoContent();
     }
 

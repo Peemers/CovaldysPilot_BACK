@@ -206,6 +206,21 @@ public class EventService(
 
     logger.LogInformation("Rappel envoyé pour l'événement {Id}", id);
   }
+  
+  public async Task UpdateCoverImageAsync(Guid id, string imageUrl)
+  {
+    logger.LogInformation("Mise à jour de l'image de couverture de l'événement {Id}", id);
+    Event? evt = await eventRepository.GetByIdAsync(id);
+    
+    EnsureEventExists(evt, id);
+    
+    evt!.CoverImage = imageUrl;
+    evt.UpdatedAt = DateTime.UtcNow;
+    
+    await eventRepository.UpdateAsync(evt);
+    await eventRepository.SaveChangesAsync();
+    logger.LogInformation("Image de couverture mise à jour : {Id}", id);
+  }
 
   //Methodes privées
 

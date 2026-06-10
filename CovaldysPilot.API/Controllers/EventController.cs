@@ -11,7 +11,8 @@ namespace CovaldysPilot.API.Controllers;
 [Route("api/[controller]")]
 public class EventController(
   IEventService eventService,
-  ILogger<EventController> logger) : ControllerBase
+  IBlobStorageService blobStorageService,
+  ILogger<EventController> logger): ControllerBase
 {
   [HttpGet]
   [AllowAnonymous]
@@ -111,5 +112,33 @@ public class EventController(
   {
     string? userIdClaim = User.FindFirstValue("sub");
     return Guid.TryParse(userIdClaim, out Guid userId) ? userId : null;
+  }
+  
+  [HttpPost("{id:guid}/upload-image")]
+  [Authorize(Roles = "Admin")]
+  [EndpointSummary("Upload une image de couverture")]
+  public async Task<ActionResult<string>> UploadCoverImage(Guid id, IFormFile file)
+  {
+    if (file == null || file.Length == 0)
+      return BadRequest("Aucun fichier fourni.");
+
+    // Verif si bien une image
+    var allowedTypes = new[] { "image/jpeg", "image/png", "image/webp" };
+    if (!allowedTypes.Contains(file.ContentType))
+      return BadRequest("Format non supporté. Utilisez JPG, PNG ou WebP.");
+
+    // Verif la taille max 10MB
+    if (file.Length > 10 * 1024 * 1024)
+      return BadRequest("L'image ne doit pas dépasser 5MB.");
+
+    logger.LogInformation("POST /api/events/{Id}/upload-image", id);
+
+    await using var stream = file.OpenReadStream();
+    var url = await blobStorageService.UploadAsync(stream, file.FileName, file.ContentType);
+
+    // Mettre a jour l'event avec la nouvelle URL
+    await eventService.UpdateCoverImageAsync(id, url);
+
+    return Ok(new { url });
   }
 }
