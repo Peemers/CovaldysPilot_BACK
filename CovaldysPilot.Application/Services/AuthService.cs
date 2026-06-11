@@ -112,4 +112,37 @@ public class AuthService(
 
     return user.ToAuthResponseDto(accessToken, newRefreshToken, expiryDate);
   }
+  
+  public async Task ChangePasswordAsync(Guid userId, ChangePasswordRequestDto dto)
+  {
+    logger.LogInformation("Changement de mot de passe pour : {UserId}", userId);
+    
+    if (dto.NewPassword != dto.ConfirmNewPassword)
+      throw new InvalidOperationException("Les nouveaux mots de passe ne correspondent pas.");
+
+    //recup user
+    User? user = await userRepository.GetByIdAsync(userId);
+    if (user is null)
+      throw new KeyNotFoundException($"Membre {userId} introuvable.");
+
+    // verif ancien mdp
+    if (!BCrypt.Net.BCrypt.Verify(dto.CurrentPassword, user.PasswordHash))
+    {
+      logger.LogWarning("Ancien mot de passe incorrect pour : {UserId}", userId);
+      throw new InvalidOperationException("Mot de passe actuel incorrect.");
+    }
+
+    // verif si nouveau est dif du nouveau
+    if (BCrypt.Net.BCrypt.Verify(dto.NewPassword, user.PasswordHash))
+      throw new InvalidOperationException("Le nouveau mot de passe doit être différent de l'ancien.");
+
+    // Hachage, sauvegarde
+    user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
+    user.UpdatedAt = DateTime.UtcNow;
+
+    await userRepository.UpdateAsync(user);
+    await userRepository.SaveChangesAsync();
+
+    logger.LogInformation("Mot de passe changé avec succès pour : {UserId}", userId);
+  }
 }

@@ -9,5 +9,12 @@ public class SiteConfigurationConfiguration : IEntityTypeConfiguration<SiteConfi
   public void Configure(EntityTypeBuilder<SiteConfiguration> builder)
   {
     builder.HasKey(sc => sc.Id);
+
+    builder.HasData(new SiteConfiguration
+    {
+      Id = 1,
+      IsMaintenanceMode = false,
+      GlobalAlertMessage = null
+    });
   }
 }
