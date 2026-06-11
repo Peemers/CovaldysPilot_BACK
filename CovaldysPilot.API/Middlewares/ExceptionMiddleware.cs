@@ -11,6 +11,16 @@ public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddlewa
     {
       await next(context);
     }
+    catch (KeyNotFoundException ex)
+    {
+      logger.LogWarning("Ressource introuvable : {Message}", ex.Message);
+      await HandleExceptionAsync(context, HttpStatusCode.NotFound, ex.Message);
+    }
+    catch (ArgumentException ex)
+    {
+      logger.LogWarning("Argument invalide : {Message}", ex.Message);
+      await HandleExceptionAsync(context, HttpStatusCode.BadRequest, ex.Message);
+    }
     catch (InvalidOperationException ex)
     {
       logger.LogWarning("Erreur métier : {Message}", ex.Message);
