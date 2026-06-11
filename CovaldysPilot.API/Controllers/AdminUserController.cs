@@ -1,4 +1,5 @@
-﻿using CovaldysPilot.Application.DTOs.User.Response;
+﻿using CovaldysPilot.Application.DTOs.User.Request;
+using CovaldysPilot.Application.DTOs.User.Response;
 using CovaldysPilot.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -53,5 +54,14 @@ public class AdminUserController(
     return File(
       fileBytes, "application/vnd.openxmlformats-officedocument" +
                  ".spreadsheetml.sheet", $"membres_{filter ?? "all"}_{DateTime.UtcNow:yyyyMMdd}.xlsx"); //nom du fichier
+  }
+  
+  [HttpPost]
+  [EndpointSummary("Ajouter un membre manuellement")]
+  public async Task<ActionResult<CreateUserManuallyResponseDto>> AddManually([FromBody] CreateUserManuallyRequestDto dto)
+  {
+    logger.LogInformation("POST /api/admin/users - Ajout manuel de {Email}", dto.Email);
+    CreateUserManuallyResponseDto user = await userService.AddManuallyAsync(dto);
+    return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
   }
 }

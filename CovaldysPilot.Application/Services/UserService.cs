@@ -1,4 +1,6 @@
-﻿using CovaldysPilot.Application.DTOs.User.Response;
+﻿using CovaldysPilot.Application.DTOs.User.Request;
+using CovaldysPilot.Application.DTOs.User.Response;
+using CovaldysPilot.Application.Email.Templates;
 using CovaldysPilot.Application.Helpers;
 using CovaldysPilot.Application.Interfaces.Repositories;
 using CovaldysPilot.Application.Interfaces.Services;
@@ -10,6 +12,7 @@ namespace CovaldysPilot.Application.Services;
 
 public class UserService(
   IUserRepository userRepository,
+  IEmailService emailService,
   ILogger<UserService> logger) : IUserService
 {
   public async Task<IEnumerable<UserResponseDto>> GetAllAsync()
@@ -53,5 +56,40 @@ public class UserService(
     };
 
     return ExcelHelper.GenerateMembersExcel(users);
+  }
+
+  public async Task<CreateUserManuallyResponseDto> AddManuallyAsync(CreateUserManuallyRequestDto dto)
+  {
+    logger.LogInformation("Ajout manuel d'un membre : {Email}", dto.Email);
+
+    bool emailExists = await userRepository.EmailExistsAsync(dto.Email);
+    if (emailExists)
+      throw new InvalidOperationException($"L'email {dto.Email} est déjà utilisé.");
+
+    bool pseudoExists = await userRepository.PseudoExistsAsync(dto.Pseudo);
+    if (pseudoExists)
+      throw new InvalidOperationException($"Le pseudo {dto.Pseudo} est déjà utilisé.");
+
+    // On garde le mot de passe en clair pour l'envoyer par email et le retourner
+    string tempPassword = PasswordHelper.GenerateRandomPassword();
+    string passwordHash = BCrypt.Net.BCrypt.HashPassword(tempPassword);
+
+    User user = dto.ToUserFromManualCreation(passwordHash);
+
+    await userRepository.AddAsync(user);
+    await userRepository.SaveChangesAsync();
+
+    // Envoi email au membre avec son mot de passe temporaire
+    await emailService.SendEmail(
+      user.Email,
+      user.FirstName,
+      "Bienvenue sur Covaldys — Votre compte a été créé",
+      EmailTemplates.ManualAccountCreation(user.FirstName, user.Email, tempPassword)
+    );
+
+    logger.LogInformation("Membre ajouté manuellement : {Id}", user.Id);
+    
+    // On retourne le nouveau DTO avec le mot de passe temporaire en clair
+    return user.ToCreateUserManuallyResponseDto(tempPassword);
   }
 }

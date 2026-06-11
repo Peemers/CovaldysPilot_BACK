@@ -1,4 +1,5 @@
-﻿using CovaldysPilot.Application.DTOs.User.Response;
+﻿using CovaldysPilot.Application.DTOs.User.Request;
+using CovaldysPilot.Application.DTOs.User.Response;
 
 namespace CovaldysPilot.Application.Interfaces.Services;
 
@@ -8,4 +9,5 @@ public interface IUserService
   Task<UserResponseDto?> GetByIdAsync(Guid id);
   Task DeleteAsync(Guid id);
   Task<byte[]> ExportMembersAsync(string? filter = null);
+  Task<CreateUserManuallyResponseDto> AddManuallyAsync(CreateUserManuallyRequestDto dto);
 }
