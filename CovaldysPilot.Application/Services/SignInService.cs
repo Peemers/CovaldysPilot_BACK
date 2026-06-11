@@ -117,7 +117,7 @@ public class SignInService(
     await signInRepository.DeleteAsync(signInId);
     await signInRepository.SaveChangesAsync();
 
-    // si pas en liste d'attente -> proouvoir le premier en attente via la methode plus bas
+    // si le désinscrit n'était pas dans la liste -> proouvoir le premier en attente via la methode plus bas
 
     if (!wasOnWaitingList)
     {
@@ -151,7 +151,7 @@ public class SignInService(
 
   #region PromoteFirstOnWaitingListAsync
 
-  //Methode prive de verif
+  //Methode prive de verif, le premier en fil d'attente gagne sa place dans la file
   
   private async Task PromoteFirstOnWaitingListAsync(Guid eventId)
   {
