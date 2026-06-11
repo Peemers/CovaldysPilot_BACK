@@ -2,6 +2,6 @@
 
 public class SiteConfigurationResponseDto
 {
-  public bool IsMaintenanceMode { get; set; }
-  public string? GlobalAlertMessage { get; set; }
+  public bool IsMaintenanceMode { get; init; }
+  public string? GlobalAlertMessage { get; init; }
 }

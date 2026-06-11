@@ -20,8 +20,6 @@ public class EventController(
   public async Task<ActionResult<IEnumerable<EventResponseDto>>> GetAll()
   {
     Guid? currentUserId = GetCurrentUserId();
-    logger.LogCritical(" !!! UserId récupéré : {UserId}", currentUserId);
-    logger.LogInformation("GET /api/events - UserId: {UserId}", currentUserId);
     IEnumerable<EventResponseDto> events = await eventService.GetAllAsync(currentUserId);
     return Ok(events);
   }

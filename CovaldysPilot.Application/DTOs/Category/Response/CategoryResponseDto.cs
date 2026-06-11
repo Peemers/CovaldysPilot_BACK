@@ -2,7 +2,7 @@
 
 public class CategoryResponseDto
 {
-  public Guid Id { get; set; }
-  public required string Name { get; set; }
-  public DateTime CreatedAt { get; set; }
+  public Guid Id { get; init; }
+  public required string Name { get; init; }
+  public DateTime CreatedAt { get; init; }
 }
