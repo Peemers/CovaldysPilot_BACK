@@ -9,4 +9,5 @@ public interface IAuthService
   Task<AuthResponseDto> LoginAsync(LoginRequestDto dto);
   Task<AuthResponseDto> RefreshTokenAsync(RefreshTokenRequestDto dto);
   Task RevokeTokenAsync(string refreshToken);
+  Task ChangePasswordAsync(Guid userId, ChangePasswordRequestDto dto);
 }

@@ -1,4 +1,5 @@
-﻿using CovaldysPilot.Application.DTOs.Auth.Request;
+﻿using System.Security.Claims;
+using CovaldysPilot.Application.DTOs.Auth.Request;
 using CovaldysPilot.Application.DTOs.Auth.Response;
 using CovaldysPilot.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -54,6 +55,20 @@ namespace CovaldysPilot.API.Controllers
       logger.LogInformation("Déconnexion demandée");
       await authService.RevokeTokenAsync(dto.RefreshToken);
       logger.LogInformation("Déconnexion réussie");
+      return NoContent();
+    }
+    [HttpPatch("change-password")]
+    [Authorize]
+    [EndpointSummary("Changer son mot de passe")]
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequestDto dto)
+    {
+      // recuperation dans JWT
+      string? userIdClaim = User.FindFirstValue("sub");
+      if (!Guid.TryParse(userIdClaim, out Guid userId))
+        return Unauthorized();
+    
+      logger.LogInformation("Changement de mot de passe pour : {UserId}", userId);
+      await authService.ChangePasswordAsync(userId, dto);
       return NoContent();
     }
   }
