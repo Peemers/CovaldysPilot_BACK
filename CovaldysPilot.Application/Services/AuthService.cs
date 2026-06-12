@@ -1,4 +1,4 @@
-﻿using CovaldysPilot.Application.DTOs.Auth.Request;
+using CovaldysPilot.Application.DTOs.Auth.Request;
 using CovaldysPilot.Application.DTOs.Auth.Response;
 using CovaldysPilot.Application.Interfaces.Repositories;
 using CovaldysPilot.Application.Interfaces.Services;
@@ -14,6 +14,8 @@ public class AuthService(
   IJwtService jwtService,
   ILogger<AuthService> logger) : IAuthService
 {
+  #region RegisterAsync
+  /// <inheritdoc/>
   public async Task<AuthResponseDto> RegisterAsync(RegisterRequestDto dto)
   {
     logger.LogInformation("Tentative d'inscription pour l'email : {Email}", dto.Email);
@@ -47,7 +49,10 @@ public class AuthService(
     logger.LogInformation("Inscription réussie pour : {Pseudo}", dto.Pseudo);
     return await GenerateAuthResponse(user);
   }
+  #endregion
 
+  #region LoginAsync
+  /// <inheritdoc/>
   public async Task<AuthResponseDto> LoginAsync(LoginRequestDto dto)
   {
     logger.LogInformation("Tentative de connexion pour : {EmailOrPseudo}", dto.EmailOrPseudo);
@@ -64,7 +69,10 @@ public class AuthService(
     logger.LogInformation("Connexion réussie pour : {Pseudo}", user.Pseudo);
     return await GenerateAuthResponse(user);
   }
+  #endregion
 
+  #region RefreshTokenAsync
+  /// <inheritdoc/>
   public async Task<AuthResponseDto> RefreshTokenAsync(RefreshTokenRequestDto dto)
   {
     logger.LogInformation("Tentative de refresh token");
@@ -90,7 +98,10 @@ public class AuthService(
     logger.LogInformation("Refresh token réussi pour : {Pseudo}", refreshToken.User.Pseudo);
     return await GenerateAuthResponse(refreshToken.User);
   }
+  #endregion
 
+  #region RevokeTokenAsync
+  /// <inheritdoc/>
   public async Task RevokeTokenAsync(string refreshToken)
   {
     logger.LogInformation("Révocation du refresh token");
@@ -98,6 +109,7 @@ public class AuthService(
     await refreshTokenRepository.SaveChangesAsync();
     logger.LogInformation("Refresh token révoqué avec succès");
   }
+  #endregion
 
   private async Task<AuthResponseDto> GenerateAuthResponse(User user)
   {
@@ -113,6 +125,8 @@ public class AuthService(
     return user.ToAuthResponseDto(accessToken, newRefreshToken, expiryDate);
   }
   
+  #region ChangePasswordAsync
+  /// <inheritdoc/>
   public async Task ChangePasswordAsync(Guid userId, ChangePasswordRequestDto dto)
   {
     logger.LogInformation("Changement de mot de passe pour : {UserId}", userId);
@@ -145,4 +159,6 @@ public class AuthService(
 
     logger.LogInformation("Mot de passe changé avec succès pour : {UserId}", userId);
   }
+  #endregion
+}
 }
