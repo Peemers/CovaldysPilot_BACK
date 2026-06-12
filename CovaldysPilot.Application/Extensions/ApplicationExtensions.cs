@@ -16,7 +16,7 @@ public static class ApplicationExtensions
     services.AddScoped<IArticleService, ArticleService>();
     services.AddScoped<IReviewService, ReviewService>();
     services.AddScoped<ISiteConfigurationService, SiteConfigurationService>();
-        
+    
     return services;
   }
 }
