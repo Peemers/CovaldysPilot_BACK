@@ -27,8 +27,8 @@ public class EventService(
     foreach (Event evt in events)
     {
       int currentParticipants = await eventRepository.GetCurrentParticipantsCountAsync(evt.Id);
-      (bool canRegister, bool isRegistered, Guid? signInId) = CalculateRegistrationStatus(evt, currentUserId, currentParticipants);
-      result.Add(evt.ToEventResponseDto(currentParticipants, canRegister, isRegistered, signInId:  signInId));
+      (bool canRegister, bool isRegistered, bool isOnWaitingList , Guid? signInId) = CalculateRegistrationStatus(evt, currentUserId, currentParticipants);
+      result.Add(evt.ToEventResponseDto(currentParticipants, canRegister, isRegistered, signInId:  signInId, isOnWaitingList: isOnWaitingList));
     }
 
     return result;
@@ -41,10 +41,10 @@ public class EventService(
     if (evt == null) return null;
 
     int currentParticipants = await eventRepository.GetCurrentParticipantsCountAsync(id);
-    (bool canRegister, bool isRegistered, Guid? signInId) = CalculateRegistrationStatus(evt, currentUserId, currentParticipants);
+    (bool canRegister, bool isRegistered, bool isOnWaitingList, Guid? signInId) = CalculateRegistrationStatus(evt, currentUserId, currentParticipants);
     int? waitingListPosition = GetWaitingListPosition(evt, currentUserId);
 
-    return evt.ToEventResponseDto(currentParticipants, canRegister, isRegistered, waitingListPosition, signInId);
+    return evt.ToEventResponseDto(currentParticipants, canRegister, isRegistered, waitingListPosition, signInId, isOnWaitingList);
   }
 
   public async Task<EventResponseDto> CreateAsync(CreateEventRequestDto dto)
@@ -252,19 +252,26 @@ public class EventService(
       throw new InvalidOperationException("Le nombre minimum doit être inférieur ou égal au maximum.");
   }
 
-  private static (bool canRegister, bool isRegistered, Guid? signInId) CalculateRegistrationStatus(Event evt, Guid? currentUserId, int currentParticipants)
+  private static (bool canRegister, bool isRegistered, bool isOnWaitingList, Guid? signInId) CalculateRegistrationStatus(Event evt, Guid? currentUserId, int currentParticipants)
   {
     if (!currentUserId.HasValue)
-      return (false, false, null);
+      return (false, false, false, null);
     
-    SignIn? signIn = evt.SignIns.FirstOrDefault(s => s.UserId == currentUserId.Value && !s.IsOnWaitingList);
-    bool isRegistered = evt.SignIns.Any(s => s.UserId == currentUserId.Value && !s.IsOnWaitingList);
+    SignIn? confirmedSignIn = evt.SignIns.FirstOrDefault(s => s.UserId == currentUserId.Value && !s.IsOnWaitingList);
+    SignIn? waitingSignIn = evt.SignIns.FirstOrDefault(s => s.UserId == currentUserId.Value && s.IsOnWaitingList);
+
+    bool isRegistered = confirmedSignIn != null;
+    bool isOnWaitingList = waitingSignIn != null;
+
     bool canRegister = !isRegistered &&
+                       !isOnWaitingList &&
                        evt.Status == EventStatus.EnAttente &&
                        evt.RegistrationDeadline >= DateTime.UtcNow &&
                        (currentParticipants < evt.MaxParticipants);
 
-    return (canRegister, isRegistered, signIn?.Id);
+    Guid? signInId = confirmedSignIn?.Id ?? waitingSignIn?.Id;
+
+    return (canRegister, isRegistered, isOnWaitingList, signInId);
   }
 
   private static int? GetWaitingListPosition(Event evt, Guid? currentUserId)

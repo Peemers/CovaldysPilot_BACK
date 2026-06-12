@@ -26,6 +26,7 @@ public class SignInRepository(CovaldysPilotDbContext context) : ISignInRepositor
 
   public async Task<IEnumerable<SignIn>> GetByUserAsync(Guid userId)
     => await context.SignIns
+      .Include(s => s.Event)
       .Where(s => s.UserId == userId)
       .OrderByDescending(s => s.RegistrationDate)
       .ToListAsync();

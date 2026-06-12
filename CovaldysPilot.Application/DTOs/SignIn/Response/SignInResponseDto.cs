@@ -1,4 +1,7 @@
-﻿namespace CovaldysPilot.Application.DTOs.SignIn.Response;
+﻿using CovaldysPilot.Application.DTOs.Event.Response;
+using CovaldysPilot.Domain.Enums;
+
+namespace CovaldysPilot.Application.DTOs.SignIn.Response;
 
 public class SignInResponseDto
 {
@@ -12,4 +15,7 @@ public class SignInResponseDto
   public string? UserPseudo { get; init; }
   public string? UserFirstName { get; init; }
   public string? UserLastName { get; init; }
+  public string? EventName { get; init; }
+  public EventStatus? EventStatus { get; init; }
+  public DateTime? EventStartDate { get; init; }
 }

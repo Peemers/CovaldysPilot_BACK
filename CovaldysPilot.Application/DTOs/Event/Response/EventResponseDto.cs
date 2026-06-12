@@ -28,4 +28,5 @@ public class EventResponseDto
   public bool CanRegister { get; init; }
   public bool IsRegistered { get; init; }
   public int? WaitingListPosition { get; init; }
+  public bool IsOnWaitingList { get; init; }
 }

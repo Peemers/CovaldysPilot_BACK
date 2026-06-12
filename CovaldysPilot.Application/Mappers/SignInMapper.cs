@@ -20,6 +20,9 @@ public static class SignInMapper
       UserPseudo = signIn.User?.Pseudo,
       UserFirstName = signIn.User?.FirstName,
       UserLastName = signIn.User?.LastName,
+      EventName = signIn.Event?.Name,
+      EventStatus =  signIn.Event?.Status,
+      EventStartDate = signIn.Event?.StartDate,
     };
   }
 
