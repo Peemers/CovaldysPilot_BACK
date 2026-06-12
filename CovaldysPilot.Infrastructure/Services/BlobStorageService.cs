@@ -12,15 +12,15 @@ public class BlobStorageService(IConfiguration configuration) : IBlobStorageServ
 
   public async Task<string> UploadAsync(Stream fileStream, string fileName, string contentType)
   {
-    var blobServiceClient = new BlobServiceClient(_connectionString);
-    var containerClient = blobServiceClient.GetBlobContainerClient(_containerName);
+    BlobServiceClient blobServiceClient = new BlobServiceClient(_connectionString);
+    BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(_containerName);
         
     // creation container si n'existe pas
     await containerClient.CreateIfNotExistsAsync(PublicAccessType.Blob);
         
     // Generation nom unique
     var uniqueFileName = $"{Guid.NewGuid()}-{fileName}";
-    var blobClient = containerClient.GetBlobClient(uniqueFileName);
+    BlobClient blobClient = containerClient.GetBlobClient(uniqueFileName);
         
     // Upload
     await blobClient.UploadAsync(fileStream, new BlobHttpHeaders
@@ -33,12 +33,12 @@ public class BlobStorageService(IConfiguration configuration) : IBlobStorageServ
 
   public async Task DeleteAsync(string fileUrl)
   {
-    var blobServiceClient = new BlobServiceClient(_connectionString);
-    var containerClient = blobServiceClient.GetBlobContainerClient(_containerName);
+    BlobServiceClient blobServiceClient = new BlobServiceClient(_connectionString);
+    BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(_containerName);
         
     // Extrait le nom du blob depuis l'URL
     var blobName = Path.GetFileName(new Uri(fileUrl).LocalPath);
-    var blobClient = containerClient.GetBlobClient(blobName);
+    BlobClient blobClient = containerClient.GetBlobClient(blobName);
         
     await blobClient.DeleteIfExistsAsync();
   }

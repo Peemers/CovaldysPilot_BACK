@@ -155,7 +155,7 @@ public class SignInService(
   
   private async Task PromoteFirstOnWaitingListAsync(Guid eventId)
   {
-    SignIn? firstOnWaiting = await signInRepository.GetFirstOnWaitingListAsync(eventId);
+    SignIn? firstOnWaiting = await signInRepository.GetFirstOnWaitingListAsync(eventId); //repo
     if (firstOnWaiting == null) return;
 
     // Promouvoir vers inscription confirmee et sortie de la WL
@@ -224,16 +224,8 @@ public class SignInService(
 
     if (isFull && !evt.IsWaitingListActive)
       throw new InvalidOperationException("L'événement est complet et ne dispose pas de file d'attente.");
-    //mapping ici car 2 id
-    SignIn signIn = new SignIn
-    {
-      UserId = userId,
-      EventId = eventId,
-      RegistrationDate = DateTime.UtcNow,
-      IsOnWaitingList = isFull,
-      IsPaymentValid = false,
-      CreatedAt = DateTime.UtcNow
-    };
+    //?? déplacer dans le mapper
+    SignIn signIn = SignInMapper.ToAdminSignIn(userId, eventId, isFull);
 
     if (isFull)
     {
