@@ -1,4 +1,4 @@
-﻿using CovaldysPilot.Application.DTOs.Review.Request;
+using CovaldysPilot.Application.DTOs.Review.Request;
 using CovaldysPilot.Application.DTOs.Review.Response;
 using CovaldysPilot.Application.Interfaces.Repositories;
 using CovaldysPilot.Application.Interfaces.Services;
@@ -14,13 +14,18 @@ public class ReviewService(
     IEventRepository eventRepository,
     ILogger<ReviewService> logger) : IReviewService
 {
+    #region GetByEventAsync
+    /// <inheritdoc/>
     public async Task<IEnumerable<ReviewResponseDto>> GetByEventAsync(Guid eventId)
     {
         logger.LogInformation("Récupération des avis pour l'événement {EventId}", eventId);
         IEnumerable<Review> reviews = await reviewRepository.GetByEventAsync(eventId);
         return reviews.Select(r => r.ToReviewResponseDto());
     }
+    #endregion
 
+    #region CreateAsync
+    /// <inheritdoc/>
     public async Task<ReviewResponseDto> CreateAsync(Guid userId, CreateReviewRequestDto dto)
     {
         logger.LogInformation("Création d'un avis par {UserId} pour l'événement {EventId}", userId, dto.EventId);
@@ -58,7 +63,10 @@ public class ReviewService(
         logger.LogInformation("Avis créé par {UserId} pour {EventId}", userId, dto.EventId);
         return created!.ToReviewResponseDto();
     }
+    #endregion
 
+    #region UpdateAsync
+    /// <inheritdoc/>
     public async Task<ReviewResponseDto> UpdateAsync(Guid userId, Guid reviewId, UpdateReviewRequestDto dto)
     {
         logger.LogInformation("Modification de l'avis {ReviewId} par {UserId}", reviewId, userId);
@@ -81,7 +89,10 @@ public class ReviewService(
         logger.LogInformation("Avis modifié : {ReviewId}", reviewId);
         return review.ToReviewResponseDto();
     }
+    #endregion
 
+    #region DeleteAsync
+    /// <inheritdoc/>
     public async Task DeleteAsync(Guid userId, Guid reviewId)
     {
         logger.LogInformation("Suppression de l'avis {ReviewId} par {UserId}", reviewId, userId);
@@ -96,4 +107,5 @@ public class ReviewService(
         await reviewRepository.SaveChangesAsync();
         logger.LogInformation("Avis supprimé : {ReviewId}", reviewId);
     }
+    #endregion
 }

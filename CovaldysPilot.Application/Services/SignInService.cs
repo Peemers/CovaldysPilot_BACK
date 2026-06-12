@@ -1,4 +1,4 @@
-﻿using CovaldysPilot.Application.DTOs.SignIn.Request;
+using CovaldysPilot.Application.DTOs.SignIn.Request;
 using CovaldysPilot.Application.DTOs.SignIn.Response;
 using CovaldysPilot.Application.Email.Templates;
 using CovaldysPilot.Application.Interfaces.Repositories;
@@ -17,8 +17,8 @@ public class SignInService(
   IUserRepository userRepository,
   ILogger<SignInService> logger) : ISignInService
 {
-  #region RegisterSignIn
-
+  #region RegisterAsync
+  /// <inheritdoc/>
   public async Task<SignInResponseDto> RegisterAsync(Guid userId, CreateSignInRequestDto dto)
   {
     logger.LogInformation("Inscription de {UserId} à l'événement {EventId}", userId, dto.EventId);
@@ -80,11 +80,10 @@ public class SignInService(
     }
     return signIn.ToSignInResponseDto();
   }
-
   #endregion
 
-  #region UnregisterSignIn
-
+  #region UnregisterAsync
+  /// <inheritdoc/>
   public async Task UnregisterAsync(Guid userId, Guid signInId)
   {
     //verif inscription
@@ -126,33 +125,32 @@ public class SignInService(
 
     logger.LogInformation("Désinscription effectuée : {signInId}", signInId);
   }
-
   #endregion
 
-  #region GetByEvent
-
+  #region GetByEventAsync
+  /// <inheritdoc/>
   public async Task<IEnumerable<SignInResponseDto>> GetByEventAsync(Guid eventId)
   {
     IEnumerable<SignIn> signIns = await signInRepository.GetByEventAsync(eventId);
     return signIns.Select(signIn => signIn.ToSignInResponseDto());
   }
-
   #endregion
 
-  #region GetByUser
-
+  #region GetByUserAsync
+  /// <inheritdoc/>
   public async Task<IEnumerable<SignInResponseDto>> GetByUserAsync(Guid userId)
   {
     IEnumerable<SignIn> signIns = await signInRepository.GetByUserAsync(userId);
     return signIns.Select(signIn => signIn.ToSignInResponseDto());
   }
-
   #endregion
 
   #region PromoteFirstOnWaitingListAsync
-
-  //Methode prive de verif, le premier en fil d'attente gagne sa place dans la file
-  
+  /// <summary>
+  /// Promeut le premier utilisateur de la liste d'attente d'un événement vers la liste des inscrits actifs.
+  /// </summary>
+  /// <param name="eventId">L'identifiant unique de l'événement.</param>
+  /// <returns>Une tâche asynchrone représentant l'opération.</returns>
   private async Task PromoteFirstOnWaitingListAsync(Guid eventId)
   {
     SignIn? firstOnWaiting = await signInRepository.GetFirstOnWaitingListAsync(eventId); //repo
@@ -179,11 +177,10 @@ public class SignInService(
       );
     }
   }
-
   #endregion
 
   #region ValidatePayment
-
+  /// <inheritdoc/>
   public async Task ValidatePayment(Guid signInId)
   {
     logger.LogInformation("Validation du paiement pour l'inscription {SignInId}", signInId);
@@ -199,11 +196,10 @@ public class SignInService(
 
     logger.LogInformation("Paiement validé pour l'inscription {SignInId}", signInId);
   }
-
   #endregion
 
-  #region AdminRegister
-
+  #region AdminRegisterAsync
+  /// <inheritdoc/>
   public async Task<SignInResponseDto> AdminRegisterAsync(Guid userId, Guid eventId)
   {
     logger.LogInformation("Inscription manuelle admin — UserId: {UserId}, EventId: {EventId}", userId, eventId);
@@ -239,11 +235,10 @@ public class SignInService(
     logger.LogInformation("Inscription manuelle créée — EnAttente: {IsWaiting}", signIn.IsOnWaitingList);
     return signIn.ToSignInResponseDto();
   }
-
   #endregion
 
-  #region AdminUnregister
-
+  #region AdminUnregisterAsync
+  /// <inheritdoc/>
   public async Task AdminUnregisterAsync(Guid signInId)
   {
     logger.LogInformation("Désinscription manuelle admin — SignInId: {SignInId}", signInId);
@@ -269,6 +264,5 @@ public class SignInService(
 
     logger.LogInformation("Désinscription manuelle effectuée : {SignInId}", signInId);
   }
-
   #endregion
 }
