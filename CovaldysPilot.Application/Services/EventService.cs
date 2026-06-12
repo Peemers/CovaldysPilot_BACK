@@ -252,8 +252,7 @@ public class EventService(
       throw new InvalidOperationException("Le nombre minimum doit être inférieur ou égal au maximum.");
   }
 
-  private static (bool canRegister, bool isRegistered, Guid? signInId) CalculateRegistrationStatus(
-    Event evt, Guid? currentUserId, int currentParticipants)
+  private static (bool canRegister, bool isRegistered, Guid? signInId) CalculateRegistrationStatus(Event evt, Guid? currentUserId, int currentParticipants)
   {
     if (!currentUserId.HasValue)
       return (false, false, null);

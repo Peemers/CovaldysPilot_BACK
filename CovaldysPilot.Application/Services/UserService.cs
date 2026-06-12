@@ -78,8 +78,7 @@ public class UserService(
 
     await userRepository.AddAsync(user);
     await userRepository.SaveChangesAsync();
-
-    // Envoi email au membre avec son mot de passe temporaire
+    
     await emailService.SendEmail(
       user.Email,
       user.FirstName,

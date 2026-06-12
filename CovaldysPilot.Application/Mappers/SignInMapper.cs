@@ -35,4 +35,17 @@ public static class SignInMapper
       CreatedAt = DateTime.Now,
     };
   }
+  
+  public static SignIn ToAdminSignIn(Guid userId, Guid eventId, bool isFull)
+  {
+    return new SignIn
+    {
+      UserId = userId,
+      EventId = eventId,
+      RegistrationDate = DateTime.UtcNow,
+      IsOnWaitingList = isFull,
+      IsPaymentValid = false,
+      CreatedAt = DateTime.UtcNow
+    };
+  }
 }

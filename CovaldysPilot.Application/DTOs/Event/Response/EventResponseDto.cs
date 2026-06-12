@@ -5,27 +5,27 @@ namespace CovaldysPilot.Application.DTOs.Event.Response;
 
 public class EventResponseDto
 {
-  public Guid Id { get; set; }
-  public required string Name { get; set; }
-  public required string Description { get; set; }
-  public string? Location { get; set; }
-  public string? CoverImage { get; set; }
-  public DateTime StartDate { get; set; }
-  public DateTime EndDate { get; set; }
-  public DateTime RegistrationDeadline { get; set; }
-  public int MinParticipants { get; set; }
-  public int MaxParticipants { get; set; }
-  public int CurrentParticipants { get; set; }
-  public EventStatus Status { get; set; }
-  public bool IsWaitingListActive { get; set; }
-  public DateTime CreatedAt { get; set; }
-  public DateTime? UpdatedAt { get; set; }
+  public Guid Id { get; init; }
+  public required string Name { get; init; }
+  public required string Description { get; init; }
+  public string? Location { get; init; }
+  public string? CoverImage { get; init; }
+  public DateTime StartDate { get; init; }
+  public DateTime EndDate { get; init; }
+  public DateTime RegistrationDeadline { get; init; }
+  public int MinParticipants { get; init; }
+  public int MaxParticipants { get; init; }
+  public int CurrentParticipants { get; init; }
+  public EventStatus Status { get; init; }
+  public bool IsWaitingListActive { get; init; }
+  public DateTime CreatedAt { get; init; }
+  public DateTime? UpdatedAt { get; init; }
   public List<CategoryResponseDto> Categories { get; set; } = new List<CategoryResponseDto>();
-  public decimal? Price { get; set; }
-  public string? SignInId { get; set; }
+  public decimal? Price { get; init; }
+  public string? SignInId { get; init; }
 
   // Champs calculés
-  public bool CanRegister { get; set; }
-  public bool IsRegistered { get; set; }
-  public int? WaitingListPosition { get; set; }
+  public bool CanRegister { get; init; }
+  public bool IsRegistered { get; init; }
+  public int? WaitingListPosition { get; init; }
 }

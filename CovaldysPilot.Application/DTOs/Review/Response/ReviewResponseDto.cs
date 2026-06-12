@@ -2,11 +2,11 @@
 
 public class ReviewResponseDto
 {
-  public Guid Id { get; set; }
-  public int Note { get; set; }
-  public string? Comment { get; set; }
-  public Guid UserId { get; set; }
-  public string UserPseudo { get; set; } = string.Empty;
-  public Guid EventId { get; set; }
-  public DateTime CreatedAt { get; set; }
+  public Guid Id { get; init; }
+  public int Note { get; init; }
+  public string? Comment { get; init; }
+  public Guid UserId { get; init; }
+  public string UserPseudo { get; init; } = string.Empty;
+  public Guid EventId { get; init; }
+  public DateTime CreatedAt { get; init; }
 }

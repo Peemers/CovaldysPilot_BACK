@@ -2,14 +2,13 @@
 
 public class AuthResponseDto
 {
-  public required Guid UserId { get; set; }
-  public required string AccessToken { get; set; }
-  public required string RefreshToken { get; set; }
-  public required string Pseudo { get; set; }
-  public required string Role { get; set; }
-  public required DateTime ExpiresAt { get; set; }
-  public required string FirstName { get; set; }
-  public string? LastName { get; set; }
-  
-  public bool IsMembershipUpToDate { get; set; }
+  public required Guid UserId { get; init; }
+  public required string AccessToken { get; init; }
+  public required string RefreshToken { get; init; }
+  public required string Pseudo { get; init; }
+  public required string Role { get; init; }
+  public required DateTime ExpiresAt { get; init; }
+  public required string FirstName { get; init; }
+  public string? LastName { get; init; }
+  public bool IsMembershipUpToDate { get; init; }
 }
