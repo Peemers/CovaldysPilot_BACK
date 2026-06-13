@@ -116,11 +116,12 @@ public class SignInService(
     await signInRepository.DeleteAsync(signInId);
     await signInRepository.SaveChangesAsync();
 
-    // si le désinscrit n'était pas dans la liste -> proouvoir le premier en attente via la methode plus bas
+    // si le [désinscrit] n'était pas dans la liste -> proouvoir le premier en attente via la methode plus bas
+    
 
-    if (!wasOnWaitingList)
+    if (!wasOnWaitingList) //SI PAS EN FILE, c'est qu'il était dans les inscriptions validées qu'il libère donc :
     {
-      await PromoteFirstOnWaitingListAsync(signIn.EventId);
+      await PromoteFirstOnWaitingListAsync(signIn.EventId); //prendre le prems en WL et le mettre dans les inscriptions validées.
     }
 
     logger.LogInformation("Désinscription effectuée : {signInId}", signInId);
