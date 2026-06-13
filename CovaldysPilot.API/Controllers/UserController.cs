@@ -39,4 +39,27 @@ public class UserController(
     return Ok(user);
   }
   #endregion
+  
+  #region PayCotisation
+  /// <summary>
+  /// Simule le paiement de la cotisation annuelle de 10€ pour le membre connecté.
+  /// </summary>
+  /// <returns>Un résultat vide indiquant la réussite de l'opération.</returns>
+  /// <response code="204">La cotisation a été payée avec succès.</response>
+  /// <response code="401">L'utilisateur n'est pas authentifié.</response>
+  [HttpPatch("me/cotisation")]
+  [EndpointSummary("Simuler le paiement de la cotisation annuelle")]
+  [ProducesResponseType(StatusCodes.Status204NoContent)]
+  [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+  public async Task<IActionResult> PayCotisation()
+  {
+    string? userIdClaim = User.FindFirstValue("sub");
+    if (!Guid.TryParse(userIdClaim, out Guid userId))
+      return Unauthorized();
+
+    logger.LogInformation("PATCH /api/users/me/cotisation - UserId: {UserId}", userId);
+    await userService.PayCotisationAsync(userId);
+    return NoContent();
+  }
+  #endregion
 }

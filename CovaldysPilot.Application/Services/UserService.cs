@@ -106,4 +106,28 @@ public class UserService(
     return user.ToCreateUserManuallyResponseDto(tempPassword);
   }
   #endregion
+  
+  #region PayCotisationAsync
+  /// <inheritdoc/>
+  public async Task PayCotisationAsync(Guid userId)
+  {
+    logger.LogInformation("Paiement de la cotisation pour : {UserId}", userId);
+
+    User? user = await userRepository.GetByIdAsync(userId);
+    if (user is null)
+      throw new KeyNotFoundException($"Membre {userId} introuvable.");
+
+    if (user.IsMembershipUpToDate)
+      throw new InvalidOperationException("Votre cotisation est déjà à jour.");
+
+    user.IsMembershipUpToDate = true;
+    user.LastPayementDate = DateTime.Now;
+    user.UpdatedAt = DateTime.Now;
+
+    await userRepository.UpdateAsync(user);
+    await userRepository.SaveChangesAsync();
+
+    logger.LogInformation("Cotisation payée pour : {UserId}", userId);
+  }
+  #endregion
 }
