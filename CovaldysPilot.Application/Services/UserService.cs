@@ -1,4 +1,4 @@
-﻿using CovaldysPilot.Application.DTOs.User.Request;
+using CovaldysPilot.Application.DTOs.User.Request;
 using CovaldysPilot.Application.DTOs.User.Response;
 using CovaldysPilot.Application.Email.Templates;
 using CovaldysPilot.Application.Helpers;
@@ -15,20 +15,28 @@ public class UserService(
   IEmailService emailService,
   ILogger<UserService> logger) : IUserService
 {
+  #region GetAllAsync
+  /// <inheritdoc/>
   public async Task<IEnumerable<UserResponseDto>> GetAllAsync()
   {
     logger.LogInformation("Récupération de tous les membres");
     IEnumerable<Domain.Entities.User> users = await userRepository.GetAllAsync();
     return users.Select(u => u.ToUserResponseDto());
   }
+  #endregion
 
+  #region GetByIdAsync
+  /// <inheritdoc/>
   public async Task<UserResponseDto?> GetByIdAsync(Guid id)
   {
     logger.LogInformation("Récupération du membre : {Id}", id);
     User? user = await userRepository.GetByIdAsync(id);
     return user?.ToUserResponseDto();
   }
+  #endregion
 
+  #region DeleteAsync
+  /// <inheritdoc/>
   public async Task DeleteAsync(Guid id)
   {
     logger.LogInformation("Suppression du membre : {Id}", id);
@@ -41,7 +49,10 @@ public class UserService(
     await userRepository.SaveChangesAsync();
     logger.LogInformation("Membre supprimé : {Id}", id);
   }
+  #endregion
 
+  #region ExportMembersAsync
+  /// <inheritdoc/>
   public async Task<byte[]> ExportMembersAsync(string? filter = null)
   {
     logger.LogInformation("Export des membres - Filtre: {Filter}", filter ?? "all");
@@ -57,7 +68,10 @@ public class UserService(
 
     return ExcelHelper.GenerateMembersExcel(users);
   }
+  #endregion
 
+  #region AddManuallyAsync
+  /// <inheritdoc/>
   public async Task<CreateUserManuallyResponseDto> AddManuallyAsync(CreateUserManuallyRequestDto dto)
   {
     logger.LogInformation("Ajout manuel d'un membre : {Email}", dto.Email);
@@ -91,4 +105,5 @@ public class UserService(
     // On retourne le nouveau DTO avec le mot de passe temporaire en clair
     return user.ToCreateUserManuallyResponseDto(tempPassword);
   }
+  #endregion
 }

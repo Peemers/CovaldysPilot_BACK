@@ -1,4 +1,4 @@
-﻿using CovaldysPilot.Application.DTOs.Article.Request;
+using CovaldysPilot.Application.DTOs.Article.Request;
 using CovaldysPilot.Application.DTOs.Article.Response;
 using CovaldysPilot.Application.Interfaces.Repositories;
 using CovaldysPilot.Application.Interfaces.Services;
@@ -12,13 +12,18 @@ public class ArticleService(
     IArticleRepository articleRepository,
     ILogger<ArticleService> logger) : IArticleService
 {
+    #region GetAllAsync
+    /// <inheritdoc/>
     public async Task<IEnumerable<ArticleResponseDto>> GetAllAsync()
     {
         logger.LogInformation("Récupération de tous les articles");
         IEnumerable<Article> articles = await articleRepository.GetAllArticlesWhitImageAsync();
         return articles.Select(a => a.ToArticleResponseDto());
     }
+    #endregion
 
+    #region GetByIdAsync
+    /// <inheritdoc/>
     public async Task<ArticleResponseDto?> GetByIdAsync(Guid id)
     {
         logger.LogInformation("Récupération de l'article {Id}", id);
@@ -31,7 +36,10 @@ public class ArticleService(
 
         return article.ToArticleResponseDto();
     }
+    #endregion
 
+    #region CreateAsync
+    /// <inheritdoc/>
     public async Task<ArticleResponseDto> CreateAsync(CreateArticleRequestDto dto, Guid? userId)
     {
         logger.LogInformation("Création d'un article : {Title}", dto.Title);
@@ -47,7 +55,10 @@ public class ArticleService(
         logger.LogInformation("Article créé : {Title}", dto.Title);
         return created.ToArticleResponseDto();
     }
+    #endregion
 
+    #region UpdateAsync
+    /// <inheritdoc/>
     public async Task<ArticleResponseDto> UpdateAsync(Guid id, UpdateArticleRequestDto dto)
     {
         logger.LogInformation("Modification de l'article {Id}", id);
@@ -64,7 +75,10 @@ public class ArticleService(
         logger.LogInformation("Article modifié : {Id}", id);
         return article.ToArticleResponseDto();
     }
+    #endregion
 
+    #region DeleteAsync
+    /// <inheritdoc/>
     public async Task DeleteAsync(Guid id)
     {
         logger.LogInformation("Suppression de l'article {Id}", id);
@@ -77,6 +91,10 @@ public class ArticleService(
         await articleRepository.SaveChangesAsync();
         logger.LogInformation("Article supprimé : {Id}", id);
     }
+    #endregion
+
+    #region AddImageAsync
+    /// <inheritdoc/>
     public async Task<ArticleResponseDto> AddImageAsync(Guid id, string imageUrl)
     {
         logger.LogInformation("Ajout d'une image à l'article {Id}", id);
@@ -103,7 +121,10 @@ public class ArticleService(
         logger.LogInformation("Image ajoutée à l'article {Id}", id);
         return updated!.ToArticleResponseDto();
     }
+    #endregion
 
+    #region DeleteImageAsync
+    /// <inheritdoc/>
     public async Task DeleteImageAsync(Guid articleId, Guid imageId)
     {
         logger.LogInformation("Suppression de l'image {ImageId} de l'article {ArticleId}", imageId, articleId);
@@ -123,4 +144,5 @@ public class ArticleService(
 
         logger.LogInformation("Image {ImageId} supprimée", imageId);
     }
+    #endregion
 }
