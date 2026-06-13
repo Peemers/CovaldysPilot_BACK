@@ -48,4 +48,14 @@ public interface IUserService
   /// <returns>Le DTO de réponse contenant les informations de l'utilisateur créé.</returns>
   Task<CreateUserManuallyResponseDto> AddManuallyAsync(CreateUserManuallyRequestDto dto);
   #endregion
+  
+  #region PayCotisationAsync
+  /// <summary>
+  /// Simule le paiement de la cotisation annuelle de 10€ pour un membre de manière asynchrone.
+  /// Met à jour le statut du membre en "Effectif" et enregistre la date du dernier paiement.
+  /// </summary>
+  /// <param name="userId">L'identifiant unique du membre.</param>
+  /// <returns>Une tâche asynchrone représentant l'opération.</returns>
+  Task PayCotisationAsync(Guid userId);
+  #endregion
 }
