@@ -7,7 +7,7 @@ COPY CovaldysPilot.Domain/CovaldysPilot.Domain.csproj CovaldysPilot.Domain/
 COPY CovaldysPilot.Application/CovaldysPilot.Application.csproj CovaldysPilot.Application/
 COPY CovaldysPilot.Infrastructure/CovaldysPilot.Infrastructure.csproj CovaldysPilot.Infrastructure/
 COPY CovaldysPilot.API/CovaldysPilot.API.csproj CovaldysPilot.API/
-COPY CovaldysPilot.Tests/CovaldysPilot.API.csproj CovaldysPilot.Tests/
+COPY CovaldysPilot.Tests/CovaldysPilot.Tests.csproj CovaldysPilot.Tests/
 
 # Restaure les dépendances
 RUN dotnet restore CovaldysPilot.API/CovaldysPilot.API.csproj
