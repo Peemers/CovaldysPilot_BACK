@@ -34,7 +34,20 @@ public class ArticleRepository(CovaldysPilotDbContext context) : IArticleReposit
     context.Articles.Update(article);
     return Task.CompletedTask;
   }
-
+  public Task UpdateArticleFieldsAsync(Article article)
+  {
+    context.Entry(article).Property(a => a.Title).IsModified = true;
+    context.Entry(article).Property(a => a.Content).IsModified = true;
+    context.Entry(article).Property(a => a.Author).IsModified = true;
+    context.Entry(article).Property(a => a.UpdatedAt).IsModified = true;
+    context.Entry(article).Property(a => a.ViewCount).IsModified = true;
+    
+    foreach (var image in article.Images)
+    {
+      context.Entry(image).State = EntityState.Detached;
+    }
+    return Task.CompletedTask;
+  }
   public async Task DeleteAsync(Guid id)
   {
     Article? article = await GetByIdAsync(id);

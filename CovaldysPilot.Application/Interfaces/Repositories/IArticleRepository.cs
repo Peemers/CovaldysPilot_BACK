@@ -30,4 +30,14 @@ public interface IArticleRepository : IBaseRepository<Article>
   /// <returns>Une <see cref="Task"/> représentant l'opération asynchrone.</returns>
   Task AddImageAsync(ArticleImage image);
   #endregion
+  
+  #region UpdateArticleFieldsAsync
+  /// <summary>
+  /// Met à jour uniquement les champs textuels d'un article de manière asynchrone,
+  /// sans affecter les images associées.
+  /// </summary>
+  /// <param name="article">L'article <see cref="Article"/> dont les champs doivent être mis à jour.</param>
+  /// <returns>Une <see cref="Task"/> représentant l'opération asynchrone.</returns>
+  Task UpdateArticleFieldsAsync(Article article);
+  #endregion
 }
