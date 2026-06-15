@@ -22,7 +22,7 @@ public class EventRepository(CovaldysPilotDbContext context) : IEventRepository
       .Include(e => e.EventCategories)
       .ThenInclude(ec => ec.Category)
       .Include(e => e.SignIns)
-      .OrderByDescending(e => e.UpdatedAt ?? e.CreatedAt)
+      .OrderBy(e => e.StartDate)
       .ToListAsync();
 
   public async Task<Event?> GetByIdWithDetailsAsync(Guid id)

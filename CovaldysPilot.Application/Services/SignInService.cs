@@ -71,12 +71,19 @@ public class SignInService(
     User? user = await userRepository.GetByIdAsync(userId);
     if (user != null)
     {
-      await emailService.SendEmail(
-        user.Email,
-        user.FirstName,
-        $"Confirmation d'inscription à l'événement {evt.Name}",
-        EmailTemplates.RegistrationConfirmation(user.FirstName, evt.Name, evt.StartDate, evt.Location)
-      );
+      try
+      {
+        await emailService.SendEmail(
+          user.Email,
+          user.FirstName,
+          $"Confirmation d'inscription à l'événement {evt.Name}",
+          EmailTemplates.RegistrationConfirmation(user.FirstName, evt.Name, evt.StartDate, evt.Location)
+        );
+      }
+      catch (Exception e)
+      {
+        logger.LogWarning("Erreur envoi email confirmation : {Message}", e.Message);
+      }
     }
     return signIn.ToSignInResponseDto();
   }
