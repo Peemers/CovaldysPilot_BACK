@@ -51,12 +51,5 @@ public static class ArticleMapper
     article.Content = dto.Content;
     article.Author = dto.Author;
     article.UpdatedAt = DateTime.UtcNow;
-    article.Images = dto.ImageUrls.Take(2)
-      .Select(url => new ArticleImage
-      {
-        Url = url,
-        CreatedAt = DateTime.UtcNow,
-        ArticleId = article.Id
-      }).ToList();
   }
 }

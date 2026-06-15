@@ -11,7 +11,16 @@ public class SiteConfigurationRepository(CovaldysPilotDbContext context) : ISite
   {
     SiteConfiguration? config = await context.SiteConfigurations.FirstOrDefaultAsync();
     if (config is null)
-      throw new InvalidOperationException("SiteConfiguration introuvable en base de données.");
+    {
+      config = new SiteConfiguration
+      {
+        IsMaintenanceMode = false,
+        GlobalAlertMessage = null
+      };
+      await context.SiteConfigurations.AddAsync(config);
+      await context.SaveChangesAsync();
+    }
+      
     return config;
   }
 

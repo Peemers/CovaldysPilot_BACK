@@ -36,6 +36,10 @@ public static class InfrastructureExtensions
     //Email
     services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
     services.AddScoped<IEmailService, EmailService>();
+    
+    //background service
+    
+    services.AddHostedService<EventStatusBackgroundService>();
 
     return services;
   }

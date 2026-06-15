@@ -12,7 +12,8 @@ public static class EventMapper
     int currentParticipants = 0,
     bool canRegister = false,
     bool isRegistered = false,
-    int? waitingListPosition = null, Guid? signInId = null)
+    int? waitingListPosition = null, Guid? signInId = null,
+    bool isOnWaitingList = false)
   {
     return new EventResponseDto
     {
@@ -38,7 +39,8 @@ public static class EventMapper
       IsRegistered = isRegistered,
       WaitingListPosition = waitingListPosition,
       Price = evt.Price,
-      SignInId = signInId?.ToString()
+      SignInId = signInId?.ToString(),
+      IsOnWaitingList = isOnWaitingList
     };
   }
 

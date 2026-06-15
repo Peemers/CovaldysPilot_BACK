@@ -20,6 +20,9 @@ public static class SignInMapper
       UserPseudo = signIn.User?.Pseudo,
       UserFirstName = signIn.User?.FirstName,
       UserLastName = signIn.User?.LastName,
+      EventName = signIn.Event?.Name,
+      EventStatus =  signIn.Event?.Status,
+      EventStartDate = signIn.Event?.StartDate,
     };
   }
 
@@ -33,6 +36,19 @@ public static class SignInMapper
       IsOnWaitingList = isOnWaitingList,
       IsPaymentValid = false,
       CreatedAt = DateTime.Now,
+    };
+  }
+  
+  public static SignIn ToAdminSignIn(Guid userId, Guid eventId, bool isFull)
+  {
+    return new SignIn
+    {
+      UserId = userId,
+      EventId = eventId,
+      RegistrationDate = DateTime.UtcNow,
+      IsOnWaitingList = isFull,
+      IsPaymentValid = false,
+      CreatedAt = DateTime.UtcNow
     };
   }
 }

@@ -1,4 +1,4 @@
-﻿using CovaldysPilot.Application.DTOs.Category.Request;
+using CovaldysPilot.Application.DTOs.Category.Request;
 using CovaldysPilot.Application.DTOs.Category.Response;
 using CovaldysPilot.Application.Interfaces.Repositories;
 using CovaldysPilot.Application.Interfaces.Services;
@@ -13,13 +13,18 @@ public class CategoryService(
   IEventRepository eventRepository,
   ILogger<CategoryService> logger) : ICategoryService 
 {
+  #region GetAllAsync
+  /// <inheritdoc/>
   public async Task<IEnumerable<CategoryResponseDto>> GetAllAsync()
   {
     logger.LogInformation("Récupération de toutes les catégories");
     IEnumerable<Domain.Entities.Category> categories = await categoryRepository.GetAllAsync();
     return categories.Select(c => c.ToCategoryResponseDto());
   }
+  #endregion
 
+  #region CreateAsync
+  /// <inheritdoc/>
   public async Task<CategoryResponseDto> CreateAsync(CreateCategoryRequestDto dto)
   {
     logger.LogInformation("Création d'une catégorie : {Name}", dto.Name);
@@ -34,7 +39,10 @@ public class CategoryService(
     logger.LogInformation("Catégorie créée : {Name}", dto.Name);
     return category.ToCategoryResponseDto();
   }
+  #endregion
 
+  #region DeleteAsync
+  /// <inheritdoc/>
   public async Task DeleteAsync(Guid id)
   {
     logger.LogInformation("Suppression de la catégorie : {Id}", id);
@@ -47,4 +55,5 @@ public class CategoryService(
     await categoryRepository.SaveChangesAsync();
     logger.LogInformation("Catégorie supprimée : {Id}", id);
   }
+  #endregion
 }

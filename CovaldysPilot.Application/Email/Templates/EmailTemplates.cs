@@ -12,7 +12,7 @@ public static class EmailTemplates
                 <p>À bientôt chez Covaldys !</p>
             """;
   }
-  
+
   public static string EventCancellation(string firstName, string eventName, DateTime startDate, string? reason)
   {
     return $"""
@@ -23,7 +23,7 @@ public static class EmailTemplates
                 <p>L'équipe Covaldys</p>
             """;
   }
-  
+
   public static string EventReminder(string firstName, string eventName, DateTime startDate, string? location)
   {
     return $"""
@@ -34,7 +34,7 @@ public static class EmailTemplates
                 <p>L'équipe Covaldys</p>
             """;
   }
-  
+
   public static string WaitingListPromotion(string firstName, string eventName, DateTime startDate, string? location)
   {
     return $"""
@@ -43,6 +43,22 @@ public static class EmailTemplates
                 <p><strong>Lieu :</strong> {location ?? "À définir"}</p>
                 <p>Votre inscription est maintenant confirmée !</p>
                 <p>À bientôt chez Covaldys !</p>
+            """;
+  }
+
+  public static string ManualAccountCreation(string firstName, string email, string temporaryPassword)
+  {
+    return $"""
+                <h2>Bienvenue chez Covaldys, {firstName} !</h2>
+                <p>Votre compte a été créé par notre administrateur.</p>
+                <p>Voici vos identifiants de connexion :</p>
+                <ul>
+                  <li><strong>Email :</strong> {email}</li>
+                  <li><strong>Mot de passe temporaire :</strong> <strong>{temporaryPassword}</strong></li>
+                </ul>
+                <p>⚠️ Pour des raisons de sécurité, veuillez changer votre mot de passe dès votre première connexion.</p>
+                <p>À bientôt chez Covaldys !</p>
+                <p>L'équipe Covaldys</p>
             """;
   }
 }
