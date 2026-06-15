@@ -52,5 +52,5 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/covaldys-api:latest
-            ghcr.io/${{ github.repository_owner }}/covaldys-api:${{ github.sha }}
+            ghcr.io/peemers/covaldys-api:latest
+            ghcr.io/peemers/covaldys-api:${{ github.sha }}
