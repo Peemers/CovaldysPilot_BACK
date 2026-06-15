@@ -22,7 +22,7 @@ services:
   api:
     build:
       context: .
-      dockerfile: CovaldysPilot.API/Dockerfile
+      dockerfile: Dockerfile
     container_name: covaldys_api
     ports:
       - "5000:8080"
