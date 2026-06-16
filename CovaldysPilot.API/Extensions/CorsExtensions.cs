@@ -6,6 +6,8 @@ public static class CorsExtentions
   {
     string allowedOrigins = configuration["CorsSettings:AllowedOrigins"]
                             ?? "http://localhost:4200";
+    
+    string[] origins = allowedOrigins.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
     services.AddCors(options =>
     {
