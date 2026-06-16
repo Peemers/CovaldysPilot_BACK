@@ -34,8 +34,9 @@ builder.Services.AddControllers()
     );
   });
 
-
 var app = builder.Build();
+
+app.UseCors("CovaldysPolicy");
 
 // Configure the HTTP request pipeline.
 app.UseMiddleware<ExceptionMiddleware>(); // tout premier middleware
@@ -54,7 +55,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseCors("CovaldysPolicy");
 app.UseSerilogRequestLogging();
 app.UseAuthentication();
 app.UseAuthorization();
